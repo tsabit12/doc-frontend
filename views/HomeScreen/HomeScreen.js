@@ -1,25 +1,72 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WP, HP } from '../config/layout';
 import { Eyeclose, Eyeopen } from '../../icons';
-import { useState } from 'react';
+import { Loading } from '../../components';
 
 const HomeScreen = ({ navigation }) => {
     const [seepassword, setseepassword] = useState(false);
+    const usernameRef = useRef(null);
+    const passwordRef = useRef(null);
+    const [errors, seterrors] = useState({});
+    const [field, setfield] = useState({username: '', password: ''});
+    const [loading, setloading] = useState(false);
+
+    const handleSubmitText = (name) => {
+        const errors = validatekey(name);
+        seterrors(errors);
+        //make sure running when input not errors
+        if(Object.keys(errors).length === 0){
+            if(name === 'username') passwordRef.current.focus();
+            if(name === 'password') handleSubmit();
+        }
+    }
+
+    const handleChangeText = (value, name) => {
+        seterrors(prev => ({ ...prev, [name]: undefined }));
+        setfield(prev => ({ ...prev, [name]: value }));
+    }
+
+    const validatekey = (fieldname) => {
+        const errors = {};
+        if(!field[fieldname]) errors[fieldname] = `${fieldname} is required`;
+        return errors;
+    }
+
+    const validate = (field) => {
+        const errors = {};
+        if(!field.username) errors.username = "username is required";
+        if(!field.password) errors.password = "password is required";
+        return errors;
+    }
+
+    const handleSubmit = () => {
+        const errors = validate(field);
+        seterrors(errors);
+
+        if(Object.keys(errors).length === 0){
+            setloading(true);
+
+            setTimeout(() => {
+                setloading(false);
+            }, 1000);
+        }
+    }
     
     return(
         <LinearGradient
             style={styles.container}
             colors={['#FA6901', '#FA6901', '#D81919']}
         >
+            <Loading open={loading} />
             <SafeAreaView style={styles.droidSafeArea}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
                     style={styles.container}
                 >
-                    <ScrollView>
+                    <ScrollView keyboardShouldPersistTaps={'handled'}>
                         <View style={{height: HP('92%'), justifyContent: 'space-around'}}>
                             <View style={styles.title}>
                                 <Image 
@@ -32,20 +79,34 @@ const HomeScreen = ({ navigation }) => {
                                     <Text style={styles.signitext}>SIGN IN</Text>
                                 </View>
                                 <View>
-                                    <View style={styles.formcontrol}>
+                                    <View style={errors.username ? styles.formcontrolerror : styles.formcontrol}>
                                         <Text style={styles.label}>Username</Text>
                                         <TextInput 
                                             placeholder='Masukan username' 
                                             style={styles.input}
+                                            ref={usernameRef}
+                                            onSubmitEditing={() => handleSubmitText('username')}
+                                            returnKeyType='next'
+                                            autoCapitalize='none'
+                                            value={field.username}
+                                            onChangeText={(text) => handleChangeText(text, 'username')}
                                         />
                                     </View>
-                                    <View style={styles.formcontrol}>
+                                    { errors.username && <Text style={styles.error}>{errors.username}</Text> }
+
+                                    <View style={errors.password ? styles.formcontrolerror : styles.formcontrol}>
                                         <Text style={styles.label}>Password</Text>
                                         <View style={{flexDirection: 'row'}}>
                                             <TextInput 
                                                 placeholder='Masukan password' 
                                                 style={{...styles.input, flex: 1}}
                                                 secureTextEntry={seepassword ? false : true }
+                                                ref={passwordRef}
+                                                autoCapitalize='none'
+                                                onSubmitEditing={() => handleSubmitText('password')}
+                                                onChangeText={(text) => handleChangeText(text, 'password')}
+                                                value={field.password}
+                                                returnKeyType='done'
                                             />
                                             <TouchableOpacity 
                                                 style={{marginRight: 10, marginTop: -10}} 
@@ -56,13 +117,15 @@ const HomeScreen = ({ navigation }) => {
                                             </TouchableOpacity>
                                         </View>
                                     </View>
+                                    { errors.password && <Text style={styles.error}>{errors.password}</Text> }
+
                                     <View style={{alignItems: 'center'}}>
                                         <LinearGradient 
                                             style={styles.buttongradient}
                                             colors={['#FA6901', '#D81919']}
                                             end={{ x: 1.6, y: 0.3 }}
                                         >
-                                            <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+                                            <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={handleSubmit}>
                                                 <Text style={styles.txtbtn}>SIGN IN</Text>
                                             </TouchableOpacity>
                                         </LinearGradient>
@@ -135,9 +198,25 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(170, 170, 170, 0.34)',
         marginTop: 14
     },
+    formcontrolerror:{
+        padding: 5,
+        paddingLeft: 10,
+        paddingTop: 10,
+        borderRadius: 5,
+        backgroundColor: 'rgba(170, 170, 170, 0.34)',
+        marginTop: 14,
+        borderWidth: 1,
+        borderColor: 'red'
+    },
     label: {
         fontFamily: 'Poppins-Regular',
         fontSize: 16
+    },
+    error: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 16,
+        color: 'red',
+        marginLeft: 10
     },
     input: {
         height: HP('5%'),
