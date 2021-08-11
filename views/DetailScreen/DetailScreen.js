@@ -1,15 +1,19 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
 const DetailScreen = ({ navigation }) => {
     return(
-        <View style={{...styles.container, backgroundColor: '#AAAAAA'}}>
+        <LinearGradient
+            style={styles.container}
+            colors={['#FA6901', '#FA6901', '#D81919']}
+        >
             <Text>Detail Screen</Text>
             <Button
                 title="Back"
                 onPress={() => navigation.goBack()}
             />
-        </View>
+        </LinearGradient>
     )
 }
 

@@ -7,6 +7,8 @@ import { useFonts } from 'expo-font';
 export default function App() {
   let [fontsLoaded] = useFonts({
     'Saira-Condensed': require('./assets/fonts/SairaCondensed-Regular.ttf'),
+    'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
+    'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf')
   });
 
   if(!fontsLoaded){
