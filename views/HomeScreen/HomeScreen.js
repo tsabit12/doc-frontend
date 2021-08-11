@@ -4,11 +4,7 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 const HomeScreen = ({ navigation }) => {
     return(
         <View style={{...styles.container}}>
-            <Text>Home Screen</Text>
-            <Button
-                title="Go to Details... again"
-                onPress={() => navigation.push('Detail')}
-            />
+            <Text style={styles.txt}>DIGITAL OPERATION {`\n`}CONTROL</Text>
         </View>
     )
 }
@@ -20,6 +16,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+    txt: {
+        fontFamily: 'Saira-Condensed',
+        fontWeight: '400',
+        lineHeight: 44,
+        fontSize: 30,
+        textAlign: 'center'
+    }
   });
   
 
