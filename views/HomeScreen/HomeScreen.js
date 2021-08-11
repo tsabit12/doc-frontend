@@ -3,8 +3,12 @@ import Constants from 'expo-constants';
 import React from 'react';
 import { Image, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WP, HP } from '../config/layout';
+import { Eyeclose, Eyeopen } from '../../icons';
+import { useState } from 'react';
 
 const HomeScreen = ({ navigation }) => {
+    const [seepassword, setseepassword] = useState(false);
+    
     return(
         <LinearGradient
             style={styles.container}
@@ -37,10 +41,20 @@ const HomeScreen = ({ navigation }) => {
                                     </View>
                                     <View style={styles.formcontrol}>
                                         <Text style={styles.label}>Password</Text>
-                                        <TextInput 
-                                            placeholder='Masukan password' 
-                                            style={styles.input}
-                                        />
+                                        <View style={{flexDirection: 'row'}}>
+                                            <TextInput 
+                                                placeholder='Masukan password' 
+                                                style={{...styles.input, flex: 1}}
+                                                secureTextEntry={seepassword ? false : true }
+                                            />
+                                            <TouchableOpacity 
+                                                style={{marginRight: 10, marginTop: -10}} 
+                                                activeOpacity={0.8}
+                                                onPress={() => setseepassword(!seepassword)}
+                                            >
+                                                { seepassword ? <Eyeopen /> : <Eyeclose /> }
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                     <View style={{alignItems: 'center'}}>
                                         <LinearGradient 
