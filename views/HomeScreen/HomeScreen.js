@@ -4,9 +4,13 @@ import React, { useRef, useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WP, HP } from '../config/layout';
 import { Eyeclose, Eyeopen } from '../../icons';
-import { Loading } from '../../components';
+import { AlertNotifaction, Loading } from '../../components';
+import service from '../../config/service';
+import { setMessage } from '../../actions/message';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, setMessage, messagenotification }) => {
     const [seepassword, setseepassword] = useState(false);
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
@@ -42,25 +46,40 @@ const HomeScreen = ({ navigation }) => {
         return errors;
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const errors = validate(field);
         seterrors(errors);
 
         if(Object.keys(errors).length === 0){
             setloading(true);
 
-            setTimeout(() => {
-                setloading(false);
-            }, 1000);
+            try {
+                const login = await service.login(field);
+                //console.log(login);
+            } catch (error) {
+                if(error.global) {
+                    setMessage({ open: true, message: error.global });
+                }else{
+                    setMessage({ open: true, message: 'Unkonwn error'});
+                }
+            }
+
+            setloading(false);
         }
     }
-    
+     
     return(
         <LinearGradient
             style={styles.container}
             colors={['#FA6901', '#FA6901', '#D81919']}
         >
             <Loading open={loading} />
+
+            { messagenotification.open && <AlertNotifaction 
+                message={messagenotification.message}
+                onClose={() => setMessage({ open: false, message: ''})}
+            /> }
+
             <SafeAreaView style={styles.droidSafeArea}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -176,7 +195,6 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
-        elevation: 2,
         justifyContent: 'space-around'
     },
     signitext: {
@@ -248,7 +266,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 15
     }
-  });
+});
   
+HomeScreen.propTypes = {
+    setMessage: PropTypes.func.isRequired,
+    messagenotification: PropTypes.object.isRequired,
+}
 
-export default HomeScreen;
+function mapStateToProps(state){
+    return {
+        messagenotification: state.message
+    }
+}
+
+export default connect(mapStateToProps, { setMessage })(HomeScreen);

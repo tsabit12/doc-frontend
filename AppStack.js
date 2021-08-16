@@ -1,14 +1,15 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
-
-const Stack = createStackNavigator();
 import { 
     HomeScreen,
     DetailScreen 
 } from './views';
 
+const Stack = createStackNavigator();
+
 const AppStack = () => {
+    
     return(
         <NavigationContainer>
             <Stack.Navigator 
