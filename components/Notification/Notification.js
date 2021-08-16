@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { HP } from '../../views/config/layout';
 import hexToRgba from 'hex-to-rgba';
 import { Close as CloseIcon, Info as InfoIcon } from '../../icons'
+import { RFValue } from 'react-native-responsive-fontsize';
 
 const Notification = ({ message, onClose }) => {
     const rightposition = useRef(new Animated.Value(-500)).current;
@@ -16,16 +17,12 @@ const Notification = ({ message, onClose }) => {
             useNativeDriver: true
         }).start(({ finished }) => {
             if(finished){
-                setTimeout(() => {
-                    handleClose();
-                }, 3000);
+                // setTimeout(() => {
+                //     handleClose();
+                // }, 3000);
             }
         });
     }, []);
-
-    useEffect(() => {
-
-    }, [])
 
     const handleClose = () => {
         Animated.timing(rightposition, {
@@ -59,7 +56,7 @@ const Notification = ({ message, onClose }) => {
                 <InfoIcon />
                 <Text style={styles.text} numberOfLines={1}> {message}</Text>
             </View>
-            <TouchableOpacity style={styles.icon} activeOpacity={0.8} onPress={handleClose}>
+            <TouchableOpacity style={styles.icon} onPress={handleClose}>
                 <CloseIcon />
             </TouchableOpacity>
         </Animated.View>
@@ -76,7 +73,7 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: 1,
         margin: 15,
-        borderRadius: 10,
+        borderRadius: 6,
         alignItems: 'center',
         flexDirection: 'row',
         padding: 10,
@@ -85,8 +82,8 @@ const styles = StyleSheet.create({
     },
     text: {
         fontFamily: 'Poppins-Regular',
-        color: '#E40000',
-        fontSize: 14
+        color: '#FFF',
+        fontSize: RFValue(12)
     },
     icon: {
         marginLeft: 6
