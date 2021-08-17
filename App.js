@@ -25,7 +25,7 @@ export default function App() {
   }else{
     return (
       <Provider store={store}>
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
         <AppStack />
       </Provider>
     );

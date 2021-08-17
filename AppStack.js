@@ -4,7 +4,8 @@ import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/
 import { 
     LoginScreen,
     DetailScreen, 
-    HomeScreen
+    HomeScreen,
+    MenuScreen
 } from './views';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,6 +23,7 @@ const UserRoute = () => {
             }}
         >
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Menu" component={MenuScreen} />
         </Stack.Navigator>
     )
 }

@@ -1,41 +1,25 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import GradientLayout from '../config/GradientLayout';
-import { HP } from '../config/layout';
+import { GradientLayout, HeaderLayout } from '../components';
 import { Menu as MenuIcon } from '../../icons';
+import PropTypes from 'prop-types';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
+
     return(
         <GradientLayout>
-            <View style={styles.header}>
-                <Text style={styles.headertitle}>Home</Text>
-                <TouchableOpacity activeOpacity={0.6}>
-                    <MenuIcon />
-                </TouchableOpacity>
-            </View>
+            <HeaderLayout 
+                title='Home'
+                withicon={true}
+                onPressIcon={() => navigation.navigate('Menu')}
+                icon={<MenuIcon />}
+            />
         </GradientLayout>
     )
 }
 
-const styles = StyleSheet.create({
-    header: {
-        height: HP('8%'),
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 15
-    },
-    center: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1
-    },
-    headertitle: {
-        color: '#FFF',
-        fontFamily: 'Poppins-Bold',
-        fontSize: RFValue(19)
-    }
-})
+
+HomeScreen.propTypes = {
+    navigation: PropTypes.object.isRequired,
+}
 
 export default HomeScreen;

@@ -9,7 +9,7 @@ import { login } from '../../actions/sessions';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { RFValue } from "react-native-responsive-fontsize";
-import GradientLayout from '../config/GradientLayout';
+import { GradientLayout } from '../components';
 
 const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => {
     const [seepassword, setseepassword] = useState(false);
