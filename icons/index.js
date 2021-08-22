@@ -6,3 +6,7 @@ export { default as Menu } from './Menu';
 export { default as CloseOutlined } from './CloseOutlined';
 export { default as Search } from './Search';
 export { default as Book } from './Book';
+export { default as AngleLeft } from './AngleLeft';
+export { default as Calendar } from './Calendar';
+export { default as AngleDown } from './AngleDown';
+export { default as ArrowForward } from './ArrowForward';

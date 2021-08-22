@@ -5,25 +5,24 @@ import {
     LoginScreen,
     DetailScreen, 
     HomeScreen,
-    MenuScreen
+    MenuScreen,
+    KirimanMenginap
 } from './views';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { 
+    vertical as verticalTransition, 
+    horizontal as horizontalTransition 
+} from './views/config/transition';
 
 const Stack = createStackNavigator();
 
 const UserRoute = () => {
     return(
-        <Stack.Navigator 
-            screenOptions={{ 
-                headerShown: false,
-                gestureEnabled: true,
-                gestureDirection: 'horizontal',
-                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
-            }}
-        >
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Menu" component={MenuScreen} />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Home" component={HomeScreen} options={{ ...verticalTransition }} />
+            <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
+            <Stack.Screen name="KirimanMenginap" component={KirimanMenginap} options={{ ...verticalTransition }} />
         </Stack.Navigator>
     )
 }

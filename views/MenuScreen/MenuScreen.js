@@ -12,17 +12,21 @@ import { HP, WP } from '../config/layout';
 import PropTypes from 'prop-types';
 
 const menus = [
-    { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman'},
-    { id: '2', title: 'Transaksi Loket', subtitle: 'Pengawasan Transaksi Loket'},
-    { id: '3', title: 'Kiriman Menginap', subtitle: 'Pengendalian Kiriman Potensi Menginap'},
-    { id: '4', title: 'Kiriman Terbuka', subtitle: 'Pengendalian Kiriman Terbuka'},
-    { id: '5', title: 'Antaran', subtitle: 'Pengendalian Antaran'},
-    { id: '6', title: 'Kiriman Jatuh Tempo', subtitle: ''}
+    { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman', route: 'KirimanMenginap'},
+    { id: '2', title: 'Transaksi Loket', subtitle: 'Pengawasan Transaksi Loket', route: 'KirimanMenginap'},
+    { id: '3', title: 'Kiriman Menginap', subtitle: 'Pengendalian Kiriman Potensi Menginap', route: 'KirimanMenginap' },
+    { id: '4', title: 'Kiriman Terbuka', subtitle: 'Pengendalian Kiriman Terbuka', route: 'KirimanMenginap'},
+    { id: '5', title: 'Antaran', subtitle: 'Pengendalian Antaran', route: 'KirimanMenginap'},
+    { id: '6', title: 'Kiriman Jatuh Tempo', subtitle: '', route: 'KirimanMenginap'}
 ]
 
 const MenuScreen = ({ navigation, sessions }) => {
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.listcontent} activeOpacity={0.8}>
+        <TouchableOpacity 
+            style={styles.listcontent} 
+            activeOpacity={0.8}
+            onPress={() => navigation.replace(item.route)}
+        >
             <BookIcon />
             <View style={styles.list}>
                 <Text style={styles.title}>{item.title}</Text>
