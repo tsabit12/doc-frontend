@@ -17,9 +17,9 @@ const Notification = ({ message, onClose }) => {
             useNativeDriver: true
         }).start(({ finished }) => {
             if(finished){
-                // setTimeout(() => {
-                //     handleClose();
-                // }, 3000);
+                setTimeout(() => {
+                    handleClose();
+                }, 3000);
             }
         });
     }, []);

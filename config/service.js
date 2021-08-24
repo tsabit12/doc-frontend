@@ -18,5 +18,16 @@ export default {
             }else{
                 return Promise.reject(message);
             }
-        })
+        }),
+    referensi: {
+        kprk: (params) => axios.request(useService('POST', `/referensi/kprk`, params))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data.kprk);
+                }else{
+                    return Promise.reject(message);
+                }
+            })
+    }
 }

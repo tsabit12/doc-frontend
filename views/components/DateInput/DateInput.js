@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Animated, Easing, LogBox, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, LogBox, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { AngleDown, ArrowForward, Calendar } from '../../../icons';
-import { HP, WP } from '../../config/layout';
+import { HP, INPUT_HEIGHT, WP } from '../../config/layout';
 import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from 'react-native-datepicker';
 import PropTypes from 'prop-types';
@@ -11,7 +11,7 @@ const lastoptions   = [{ title: "Last" }, { title: "Next" }];
 const numberoptions = [{title: '1'}, {title: '5'}, {title: '15'}, {title: '30'}, {title: '50'}, {title: '100'}];
 const periodoptions = [{title: 'Day'}, {title: 'Week'}, {title: 'Month'}, {title: 'Year'}];
 
-const DateInput = ({ onDateChoosed }) => {
+const DateInput = ({ onDateChoosed, children }) => {
     const [open, setopen] = useState(false);
     const collapseHeight = useRef(new Animated.Value(0)).current;
     const [field, setfield] = useState({
@@ -191,6 +191,7 @@ const DateInput = ({ onDateChoosed }) => {
                             rowStyle={styles.rowdropdown}
                             buttonTextAfterSelection={(selectedItem, index) => { return selectedItem.title }}
                             rowTextForSelection={(item, index) => { return item }}
+                            statusBarTranslucent={true}
                         />
                         <SelectDropdown
                             data={numberoptions}
@@ -204,6 +205,7 @@ const DateInput = ({ onDateChoosed }) => {
                             rowStyle={styles.rowdropdown}
                             buttonTextAfterSelection={(selectedItem, index) => { return selectedItem.title }}
                             rowTextForSelection={(item, index) => { return item }}
+                            statusBarTranslucent={true}
                         />
                         <SelectDropdown
                             data={periodoptions}
@@ -217,6 +219,7 @@ const DateInput = ({ onDateChoosed }) => {
                             rowStyle={styles.rowdropdown}
                             buttonTextAfterSelection={(selectedItem, index) => { return selectedItem.title }}
                             rowTextForSelection={(item, index) => { return item }}
+                            statusBarTranslucent={true}
                         />
                     </View>
                     <View style={styles.hr} />
@@ -310,18 +313,18 @@ const DateInput = ({ onDateChoosed }) => {
                     </View>
                 </View>                
             </Animated.View> }
+            { children }
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     root: {
-        //backgroundColor: 'red',
-        padding: 2
+        flex: 1
     }, 
     inputroot: {
         backgroundColor: '#FFF',
-        height: HP('6%'),
+        height: INPUT_HEIGHT,
         borderRadius: 7,
         alignItems: 'center',
         flexDirection: 'row',
@@ -353,8 +356,8 @@ const styles = StyleSheet.create({
         left: 0, 
         right: 0, 
         top: 0,
-        marginTop: HP('6%'),
-        zIndex: 1
+        marginTop: HP('5.6%'),
+        zIndex: 2
         //height: COLLAPSE_HEIGHT
     },
     arrowup: {
@@ -377,7 +380,12 @@ const styles = StyleSheet.create({
         marginLeft: 2,
         marginRight: 2,
         borderRadius: 7,
-        flex: 1
+        flex: 1,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
     },
     selectcontainer: {
         flexDirection: 'row',
@@ -477,6 +485,7 @@ const styles = StyleSheet.create({
 
 DateInput.propTypes = {
     onDateChoosed: PropTypes.func.isRequired,
+    children: PropTypes.func.isRequired,
 }
 
 export default DateInput;

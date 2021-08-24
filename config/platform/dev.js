@@ -1,6 +1,10 @@
-export default function request(method, service, data = undefined){
+import Constants from 'expo-constants';
+
+export default function request(method, service, data = {}){
+    const uri = `http://${Constants.manifest.debuggerHost.split(':').shift()}/api`;
+    
     return {
-        url: `http://192.168.43.184/api${service}`,
+        url: `${uri}${service}`,
         method,
         headers: {
             "Accept": "application/json",

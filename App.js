@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducers from './rootReducers';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const store = createStore(
   rootReducers,
@@ -25,8 +26,10 @@ export default function App() {
   }else{
     return (
       <Provider store={store}>
-        <StatusBar style="light" />
-        <AppStack />
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          <AppStack />
+        </SafeAreaProvider>
       </Provider>
     );
   }

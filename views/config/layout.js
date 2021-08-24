@@ -12,3 +12,5 @@ export const WIDTH = width;
 export const HEIGHT = height;
 export const WP = wp;
 export const HP = hp;
+
+export const INPUT_HEIGHT = hp('6%');
