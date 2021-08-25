@@ -12,7 +12,7 @@ import { HP, WP } from '../config/layout';
 import PropTypes from 'prop-types';
 
 const menus = [
-    { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman', route: 'KirimanMenginap'},
+    { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman', route: 'ProduksiKiriman'},
     { id: '2', title: 'Transaksi Loket', subtitle: 'Pengawasan Transaksi Loket', route: 'KirimanMenginap'},
     { id: '3', title: 'Kiriman Menginap', subtitle: 'Pengendalian Kiriman Potensi Menginap', route: 'KirimanMenginap' },
     { id: '4', title: 'Kiriman Terbuka', subtitle: 'Pengendalian Kiriman Terbuka', route: 'KirimanMenginap'},
@@ -25,7 +25,10 @@ const MenuScreen = ({ navigation, sessions }) => {
         <TouchableOpacity 
             style={styles.listcontent} 
             activeOpacity={0.8}
-            onPress={() => navigation.replace(item.route)}
+            onPress={() => navigation.replace(item.route, { 
+                title: item.title,
+                subtitle: item.subtitle
+            })}
         >
             <BookIcon />
             <View style={styles.list}>

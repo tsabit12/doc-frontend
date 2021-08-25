@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
 
 DateInput.propTypes = {
     onDateChoosed: PropTypes.func.isRequired,
-    children: PropTypes.func.isRequired,
+    children: PropTypes.node,
 }
 
 export default DateInput;
