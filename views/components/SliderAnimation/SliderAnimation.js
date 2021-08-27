@@ -11,7 +11,7 @@ const SPACING = 10;
 const ITEM_SIZE = width * 0.72;
 const SPACE_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
-const SliderAnimation = ({ listitem }) => {
+const SliderAnimation = ({ listitem, onPressDetail }) => {
     const scrollY = useRef(new Animated.Value(0)).current;
     const flatListRef = useRef(null);
 
@@ -58,7 +58,7 @@ const SliderAnimation = ({ listitem }) => {
     return(
         <React.Fragment>
             <View style={styles.link}>
-                <TouchableOpacity activeOpacity={0.8}>
+                <TouchableOpacity activeOpacity={0.8} onPress={onPressDetail}>
                     <Text style={styles.viewdetails}>View Details</Text>
                 </TouchableOpacity>
             </View>
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
 
 SliderAnimation.propTypes = {
     listitem: PropTypes.array.isRequired,
+    onPressDetail: PropTypes.func.isRequired,
 }
 
 export default SliderAnimation;

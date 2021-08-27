@@ -1,44 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// import { PieChart } from 'react-native-chart-kit';
-import { AngleDown, AngleLeft } from '../../icons';
+import { AngleLeft } from '../../icons';
 import { DateInput, DropDown, GradientLayout, HeaderLayout, OfficeDropdown, SliderAnimation } from '../components';
-import { HP, WP } from '../config/layout';
+import { HP } from '../config/layout';
 import defaultstyles from '../config/styles';
 import { PieChart } from 'react-native-svg-charts';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { generateColor } from '../../utils';
 import slider from '../../json/kiriman.json';
+import sebaranreg from '../../json/kiriman_sebaranreg.json';
+import sebarankprk from '../../json/kiriman_sebarankprk.json';
+import koorporat from '../../json/kiriman_korporat.json'
+import koorporatrevenue from '../../json/kiriman_korporatrevenue.json';
+import agenpos from '../../json/kiriman_agenpos.json';
+import datatable from '../../json/kiriman_table.json';
+
+import { Bar } from './components';
+
 const options = [
-    { title: 'Sebaran KPRK' },
-    { title: 'Sebaran Regional' },
-    { title: 'Sebaran KPC' },
-    { title: 'Sebaran Agen' },
-    { title: 'Sebaran Agen 2' },
-    { title: 'Sebaran Agen 4' },
+    { title: 'Sebaran Regional', type: 'pie' },
+    { title: 'Sebaran KPRK', type: 'pie' },
+    { title: 'Grafik Transaksi Korporat', type: 'bar' },
+    { title: 'Grafik Revenue Korporat', type: 'bar' },
+    { title: 'Grafik Transaksi Agenpos', type: 'bar' },
 ]
+
+const getData = (optionIndex) => {
+    switch (optionIndex) {
+        case 0: return sebaranreg;
+        case 1: return sebarankprk;
+        case 2: return koorporat;
+        case 3: return koorporatrevenue;
+        case 4: return agenpos;
+        default: return [];
+    }
+}
 
 const ProduksiKiriman = ({ navigation, route }) => {
     const { params } = route;
     const [datapie, setdatapie] = useState([]);
-    const [option, setoption] = useState(0);
+    const [option, setoption] = useState({
+        value: 0,
+        type: 'pie'
+    });
 
     useEffect(() => { 
+        const { value, type } = option;
         const datapie = [];
-        slider.forEach((row, index) => {
-            if(row.jumlah){
-                datapie.push({
-                    key: index,
-                    name: row.title,
-                    jumlah: row.jumlah,
-                    svg: {
-                        fill: generateColor(index)
-                    }
-                })
-            }
+        let json = getData(value);
+        
+        json.forEach((row, index) => {
+            datapie.push({
+                key: index,
+                name: row.title,
+                jumlah: row.jumlah,
+                svg: {
+                    fill: type === 'pie' ? generateColor(index) : 'rgba(134, 65, 244, 0.8)'
+                }
+            })
         });
+
         setdatapie(datapie);
-    }, [slider]);
+
+    }, [option]);
 
     const renderDot = ({ item  }) => {
         return(
@@ -47,6 +71,22 @@ const ProduksiKiriman = ({ navigation, route }) => {
                 <Text style={styles.dotitle}>{item.name} ({item.jumlah})</Text>
             </View>
         )
+    }
+
+    const renderPie = () => (
+        <PieChart
+            style={{ height: 270, width: '100%', marginTop: 10 }}
+            valueAccessor={({ item }) => item.jumlah}
+            data={datapie}
+            spacing={0}
+            outerRadius={'95%'}
+        />
+    )
+
+    const handlePressDetail = () => {
+        navigation.navigate('TableProduksiKiriman', {
+            data: datatable
+        })
     }
 
     return (
@@ -69,30 +109,31 @@ const ProduksiKiriman = ({ navigation, route }) => {
                             <OfficeDropdown
                                 onError={(message) => setMessage({ open: true, message })}
                             />
-                            <SliderAnimation listitem={slider}/>
+                            <SliderAnimation listitem={slider} onPressDetail={handlePressDetail}/>
                         </View>
                         <View style={styles.card}>
                             <DropDown 
-                                indexvalue={option}
+                                indexvalue={option.value}
                                 options={options}
-                                onChoose={(index) => setoption(index)}
+                                onChoose={(index) => setoption(prev => ({ 
+                                    ...prev, 
+                                    value: index,
+                                    type: options[index].type
+                                }))}
                             />
 
-                            <PieChart
-                                style={{ height: 270, width: '100%', marginTop: 10 }}
-                                valueAccessor={({ item }) => item.jumlah}
-                                data={datapie}
-                                spacing={0}
-                                outerRadius={'95%'}
-                            />
-                            <FlatList 
-                                data={datapie}
-                                keyExtractor={(item) => item.name}
-                                renderItem={renderDot}
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={{marginTop: 10}}
-                            />
+                            { option.type === 'pie' && <React.Fragment>
+                                { renderPie() }
+                                <FlatList 
+                                    data={datapie}
+                                    keyExtractor={(item) => item.name}
+                                    renderItem={renderDot}
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{marginTop: 10}}
+                                />
+                            </React.Fragment> }
+                            { option.type === 'bar' && <Bar data={datapie} />}
                         </View>
                     </React.Fragment>
                 </DateInput>
@@ -115,7 +156,6 @@ const styles = StyleSheet.create({
         marginLeft: -15, 
         marginRight: -15,
         flex: 1,
-        justifyContent: 'center',
         // alignItems: 'center',
     },
     dotlist: {
@@ -126,10 +166,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     dot: {
-        height: HP('3%'),
-        width: HP('3'),
+        height: HP('2%'),
+        width: HP('2'),
         backgroundColor: 'red',
-        borderRadius: HP('3%') / 2
+        borderRadius: HP('2%') / 2
     },
     dotitle: {
         textAlign: 'center',

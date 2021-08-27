@@ -20,17 +20,17 @@ const DropDown = ({ options, indexvalue, onChoose }) => {
     }
 
     const handleClose = (index) => {
+        if(index){
+            const indexvalues = index.split('-'); //add separtor to handle 0
+            onChoose(Number(indexvalues[1]));
+        }
+        
         Animated.timing(inputposition, {
             toValue: -100,
             duration: 200,
             useNativeDriver: true
         }).start(({ finished }) => { 
             if(finished){ 
-                if(index){
-                    const indexvalues = index.split('-'); //add separtor to handle 0
-                    onChoose(Number(indexvalues[1]));
-                }
-
                 setvisible(false)
             } 
         })

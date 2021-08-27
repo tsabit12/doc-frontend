@@ -7,7 +7,8 @@ import {
     HomeScreen,
     MenuScreen,
     KirimanMenginap,
-    ProduksiKiriman
+    ProduksiKiriman,
+    TableProduksiKiriman
 } from './views';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -25,6 +26,7 @@ const UserRoute = () => {
             <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
             <Stack.Screen name="KirimanMenginap" component={KirimanMenginap} options={{ ...verticalTransition }} />
             <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
+            <Stack.Screen name="TableProduksiKiriman" component={TableProduksiKiriman} options={{ ...horizontalTransition }} />
         </Stack.Navigator>
     )
 }

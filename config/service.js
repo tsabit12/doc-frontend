@@ -1,11 +1,13 @@
 import axios from 'axios';
 import dev from './platform/dev';
+import prod from './platform/prod';
 
-const platform = 'dev';
+const platform = 'prod';
+
 let useService = dev;
 
 if(platform === 'prod'){
-
+    useService = prod;
 }
 
 
