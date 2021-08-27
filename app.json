@@ -23,7 +23,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "pos.dashboard.digitalopration",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

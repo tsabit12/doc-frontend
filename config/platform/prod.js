@@ -1,5 +1,5 @@
 export default function request(method, service, data = {}){
-    const uri = `https://profilagen.posindonesia.co.id/doc`;
+    const uri = `https://rangerkom.posindonesia.co.id/doc`;
     
     return {
         url: `${uri}${service}`,
