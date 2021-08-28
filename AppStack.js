@@ -9,7 +9,8 @@ import {
     KirimanMenginap,
     ProduksiKiriman,
     TableProduksiKiriman,
-    JatuhTempo
+    JatuhTempo,
+    Irregulaity
 } from './views';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -29,6 +30,7 @@ const UserRoute = () => {
             <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
             <Stack.Screen name="TableProduksiKiriman" component={TableProduksiKiriman} options={{ ...horizontalTransition }} />
             <Stack.Screen name="JatuhTempo" component={JatuhTempo} options={{ ...verticalTransition }} />
+            <Stack.Screen name="Irregulaity" component={Irregulaity} options={{ ...verticalTransition }} />
         </Stack.Navigator>
     )
 }
