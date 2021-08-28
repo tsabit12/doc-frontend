@@ -18,7 +18,8 @@ export default function App() {
   let [fontsLoaded] = useFonts({
     'Saira-Condensed': require('./assets/fonts/SairaCondensed-Regular.ttf'),
     'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
-    'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf')
+    'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
+    //'Arial-Regular': require('./assets/fonts/arialn.ttf')
   });
 
   if(!fontsLoaded){
