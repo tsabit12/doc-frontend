@@ -1,0 +1,10 @@
+[
+    { "title": "PAID", "jumlah": 853 }, 
+    { "title": "DELIVERYRUNSHEET", "jumlah": 77 },
+    { "title": "INVEHICLE", "jumlah": 364 },
+    { "title": "INBAG", "jumlah": 275 },
+    { "title": "R7", "jumlah": 205 },
+    { "title": "UNBAG", "jumlah": 165 },
+    { "title": "INLOCATION", "jumlah": 135 },
+    { "title": "FAILEDTODELIVERED", "jumlah": 57 }
+]

@@ -5,3 +5,4 @@ export { default as MenuScreen } from './MenuScreen';
 export { default as KirimanMenginap } from './KirimanMenginap';
 export { default as ProduksiKiriman } from './ProduksiKiriman';
 export { default as TableProduksiKiriman } from './TableProduksiKiriman';
+export { default as JatuhTempo } from './JatuhTempo'

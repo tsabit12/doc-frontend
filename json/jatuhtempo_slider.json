@@ -1,0 +1,9 @@
+[
+    { "title": "left-spacer"},
+    { "title": "Jumlah Transaksi", "jumlah": "4099", "satuan": "Resi" }, 
+    { "title": "On time SWP", "jumlah": "925", "satuan": "Resi" },
+    { "title": "Jatuh Tempo", "jumlah": "343", "satuan": "Resi" },
+    { "title": "Inproses SWP", "jumlah": "2831", "satuan": "Resi" },
+    { "title": "Over SLA", "jumlah": "0", "satuan": "Resi" },
+    { "title": "right-spacer"}
+]
