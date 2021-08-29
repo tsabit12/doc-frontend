@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { 
     LoginScreen,
@@ -19,6 +19,14 @@ import {
     vertical as verticalTransition, 
     horizontal as horizontalTransition 
 } from './views/config/transition';
+
+const themes = {
+    ...DefaultTheme,
+    colors:{
+        ...DefaultTheme.colors,
+        background: '#FA6901'
+    }
+}
 
 const Stack = createStackNavigator();
 
@@ -57,7 +65,7 @@ const AppStack = ({ sessions, updateAvailable }) => {
         return <UpdatesView />;
     }else{
         return(
-            <NavigationContainer>
+            <NavigationContainer theme={themes}>
                 { Object.keys(sessions).length > 0 ? <UserRoute /> : <GuestRoute /> }
             </NavigationContainer>
         )
