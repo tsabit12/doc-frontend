@@ -89,7 +89,7 @@ const OfficeDropdown = ({ onError }) => {
                 ref={kprkRef}
                 onSelect={(selectedItem, index) => setfield(prev => ({ ...prev, kprk: index }))}
                 defaultValueByIndex={0}
-                buttonStyle={styles.button}
+                buttonStyle={{ ...styles.button, marginRight: 5}}
                 dropdownStyle={{borderRadius: 5, marginTop: 5 }}
                 dropdownIconPosition='right'
                 buttonTextStyle={{color: '#ADADAD', textAlign: 'left' }}
