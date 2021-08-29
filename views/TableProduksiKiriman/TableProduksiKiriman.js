@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, FlatList, LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
 import { GradientLayout, HeaderLayout } from '../components';
 import PropTypes from 'prop-types';
 import defaultstyles from '../config/styles';
@@ -7,34 +7,26 @@ import { AngleLeft, CollapseDown, CollapseUp } from '../../icons';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { rupiahNumber } from '../../utils';
 
+if (
+    Platform.OS === "android" &&
+    UIManager.setLayoutAnimationEnabledExperimental
+  ) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
 const TableProduksiKiriman = ({ navigation, route }) => {
     const [active, setActive] = useState([]);
-   // const collapseValue = useRef(new Animated.Value(-100)).current;
-
     const { data } = route.params;
 
     const handleCollapse = (isActive, index) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         if(isActive){
             setActive(active.filter(row => row !== index))
         }else{
-            // collapseValue.setValue(-100);
-
-            // Animated.timing(collapseValue, {
-            //     toValue: 1 ,
-            //     useNativeDriver: true,
-            //     duration: 300
-            // }).start();
-
             setActive(prev => [...prev, index])}
     }
 
     const renderItem = ({ item, index }) => {
-        // const translateY = collapseValue.interpolate({
-        //     inputRange: [(index - 5) * 50, 1],
-        //     outputRange: [(index -2) * 50, 0],
-        //     extrapolate: 'clamp'
-        // });
-
         let activeItem = active.includes(index);
 
         return(
@@ -47,38 +39,38 @@ const TableProduksiKiriman = ({ navigation, route }) => {
                     <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.connote}</Text>
                 </View>
 
-                { activeItem && <Animated.View style={{...styles.subtr }}>
+                { activeItem && <Animated.View style={styles.subtr}>
                     <View style={styles.tr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Asal kantor kirim</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.asal_kantor_kirim}</Text>
+                        <Text style={styles.collapsetd}>{item.asal_kantor_kirim}</Text>
                     </View>
-                    <View style={styles.tr}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Petugas</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.nama_petugas}</Text>
+                        <Text style={styles.collapsetd}>{item.nama_petugas}</Text>
                     </View>
-                    <View style={{ ...styles.tr, marginTop: 5 }}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Layanan</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.layanan}</Text>
+                        <Text style={styles.collapsetd}>{item.layanan}</Text>
                     </View>
-                    <View style={{ ...styles.tr, marginTop: 5 }}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Berat</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{rupiahNumber(item.berat)}</Text>
+                        <Text style={styles.collapsetd}>{rupiahNumber(item.berat)}</Text>
                     </View>
-                    <View style={{ ...styles.tr, marginTop: 5 }}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Nama Pengirim</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.nama_pengirim}</Text>
+                        <Text style={styles.collapsetd}>{item.nama_pengirim}</Text>
                     </View>
-                    <View style={{ ...styles.tr, marginTop: 5 }}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Ongkir</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{rupiahNumber(item.Ongkir)}</Text>
+                        <Text style={styles.collapsetd}>{rupiahNumber(item.Ongkir)}</Text>
                     </View>
-                    <View style={{ ...styles.tr, marginTop: 5 }}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>PPN</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{rupiahNumber(item.ppn)}</Text>
+                        <Text style={styles.collapsetd}>{rupiahNumber(item.ppn)}</Text>
                     </View>
-                    <View style={{ ...styles.tr, marginTop: 5 }}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Total</Text>
-                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{rupiahNumber(item.total)}</Text>
+                        <Text style={styles.collapsetd}>{rupiahNumber(item.total)}</Text>
                     </View>
                 </Animated.View> }
             </View>
@@ -121,7 +113,8 @@ const styles = StyleSheet.create({
     },
     tr: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginBottom: 7
     },
     td: {
         marginHorizontal: 10,
@@ -130,6 +123,17 @@ const styles = StyleSheet.create({
     },
     subtr: {
         marginLeft: 25, //icon size
+    },
+    collapsetr: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 5
+    },
+    collapsetd: {
+        marginHorizontal: 10,
+        fontSize: RFValue(12), 
+        marginTop: -5,
+        color: '#A7A6A6'
     }
 })
 
