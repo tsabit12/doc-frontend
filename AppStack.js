@@ -10,7 +10,8 @@ import {
     ProduksiKiriman,
     TableProduksiKiriman,
     JatuhTempo,
-    Irregulaity
+    Irregulaity,
+    UpdatesView
 } from './views';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -51,16 +52,21 @@ const GuestRoute = () => {
     )
 }
 
-const AppStack = ({ sessions }) => {
-    return(
-        <NavigationContainer>
-            { Object.keys(sessions).length > 0 ? <UserRoute /> : <GuestRoute /> }
-        </NavigationContainer>
-    )
+const AppStack = ({ sessions, updateAvailable }) => {
+    if(updateAvailable){
+        return <UpdatesView />;
+    }else{
+        return(
+            <NavigationContainer>
+                { Object.keys(sessions).length > 0 ? <UserRoute /> : <GuestRoute /> }
+            </NavigationContainer>
+        )
+    }
 }
 
 AppStack.propTypes = {
     sessions: PropTypes.object.isRequired,
+    updateAvailable: PropTypes.bool.isRequired,
 }
 
 function mapStateToProps(state){

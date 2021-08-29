@@ -7,3 +7,4 @@ export { default as ProduksiKiriman } from './ProduksiKiriman';
 export { default as TableProduksiKiriman } from './TableProduksiKiriman';
 export { default as JatuhTempo } from './JatuhTempo';
 export { default as Irregulaity } from './Irregulaity';
+export { default as UpdatesView } from './UpdatesView';
