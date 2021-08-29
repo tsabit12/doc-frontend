@@ -26,7 +26,7 @@ const UpdatesView = () => {
     const handleRestart = async () => {
         setloading(true);
         try {
-            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
         } catch (error) {
             alert("Something wrong! please try again letter");
         }
