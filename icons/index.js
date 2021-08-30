@@ -12,3 +12,4 @@ export { default as AngleDown } from './AngleDown';
 export { default as ArrowForward } from './ArrowForward';
 export { default as CollapseUp } from './CollapseUp';
 export { default as CollapseDown } from './CollapseDown';
+export { default as Plus } from './Plus';
