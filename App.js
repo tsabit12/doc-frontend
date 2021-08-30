@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import rootReducers from './rootReducers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Updates from 'expo-updates';
+import { Loading } from './components';
 
 const store = createStore(
   rootReducers,
@@ -17,6 +18,7 @@ const store = createStore(
 
 export default function App() {
   const [updateAvailable, setupdateAvailable] = useState(false);
+  const [loading, setloading] = useState(true);
 
   let [fontsLoaded] = useFonts({
     'Saira-Condensed': require('./assets/fonts/SairaCondensed-Regular.ttf'),
@@ -36,6 +38,9 @@ export default function App() {
         } catch (error) {
           
         }
+
+        
+        setloading(false);
       })();
     }
   }, [fontsLoaded]);
@@ -46,6 +51,7 @@ export default function App() {
     return (
       <Provider store={store}>
         <SafeAreaProvider>
+          <Loading open={loading} text='Checking for updates..' />
           <StatusBar style="light" />
           <AppStack updateAvailable={updateAvailable} />
         </SafeAreaProvider>

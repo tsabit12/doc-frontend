@@ -1,10 +1,10 @@
 import React from 'react';
 import LottieView from 'lottie-react-native';
 import PropTypes from 'prop-types';
-import { Modal, StyleSheet, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 
 const Loading = props => {
-    const { open } = props;
+    const { open, text } = props;
     
     return(
         <Modal 
@@ -23,6 +23,9 @@ const Loading = props => {
                     autoPlay
                     loop
                 />
+                { text && <View style={styles.footer}>
+                    <Text style={styles.textloading}>{ text }</Text>
+                </View> }
             </View>
         </Modal>
     )
@@ -34,11 +37,24 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 15,
+        left: 0,
+        right: 0,
+        //backgroundColor: '#FFF',
+        // padding: 8
+    },
+    textloading: {
+        textAlign: 'center',
+        fontFamily: 'Poppins-Regular'
     }
 })
 
 Loading.propTypes = {
     open: PropTypes.bool.isRequired,
+    text: PropTypes.string,
 }
 
 export default Loading;
