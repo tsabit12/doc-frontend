@@ -18,7 +18,7 @@ const store = createStore(
 
 export default function App() {
   const [updateAvailable, setupdateAvailable] = useState(false);
-  const [loading, setloading] = useState(true);
+  //const [loading, setloading] = useState(true);
 
   let [fontsLoaded] = useFonts({
     'Saira-Condensed': require('./assets/fonts/SairaCondensed-Regular.ttf'),
@@ -40,7 +40,7 @@ export default function App() {
         }
 
         
-        setloading(false);
+        // setloading(false);
       })();
     }
   }, [fontsLoaded]);
@@ -51,7 +51,7 @@ export default function App() {
     return (
       <Provider store={store}>
         <SafeAreaProvider>
-          <Loading open={loading} text='Checking for updates..' />
+          {/* <Loading open={loading} text='Checking for updates..' /> */}
           <StatusBar style="light" />
           <AppStack updateAvailable={updateAvailable} />
         </SafeAreaProvider>

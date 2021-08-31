@@ -2,6 +2,8 @@ import Constants from 'expo-constants';
 
 const uri = `http://${Constants.manifest.debuggerHost.split(':').shift()}/api`;
 
+//const uri = 'http://localhost/api';
+
 export const url = `${uri}/assets/profile`;
 
 export default function request(method, service, data = {}, type=undefined){

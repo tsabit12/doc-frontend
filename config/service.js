@@ -1,8 +1,7 @@
 import axios from 'axios';
 import dev, { url as urldev } from './platform/dev';
 import prod, { url as urlprod } from './platform/prod';
-
-const platform = 'prod';
+import platform from './platform';
 
 let useService      = dev;
 let defaultasseturl = urldev; 
