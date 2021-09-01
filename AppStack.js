@@ -4,14 +4,15 @@ import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/
 import { 
     LoginScreen,
     DetailScreen, 
-    HomeScreen,
+    // HomeScreen,
     MenuScreen,
     KirimanMenginap,
     ProduksiKiriman,
     TableProduksiKiriman,
     JatuhTempo,
     Irregulaity,
-    UpdatesView
+    UpdatesView,
+    Profile
 } from './views';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -33,13 +34,13 @@ const Stack = createStackNavigator();
 const UserRoute = () => {
     return(
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {/* <Stack.Screen name="Home" component={HomeScreen} options={{ ...verticalTransition }} /> */}
             <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
             <Stack.Screen name="KirimanMenginap" component={KirimanMenginap} options={{ ...verticalTransition }} />
             <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
             <Stack.Screen name="TableProduksiKiriman" component={TableProduksiKiriman} options={{ ...horizontalTransition }} />
             <Stack.Screen name="JatuhTempo" component={JatuhTempo} options={{ ...verticalTransition }} />
             <Stack.Screen name="Irregulaity" component={Irregulaity} options={{ ...verticalTransition }} />
+            <Stack.Screen name="Profile" component={Profile} options={{ ...horizontalTransition }} />
         </Stack.Navigator>
     )
 }

@@ -1,5 +1,5 @@
 import service from "../config/service";
-import { LOGGED_IN, LOGGED_OUT, SET_IMAGE } from "../types";
+import { LOGGED_IN, LOGGED_OUT, SET_IMAGE, UPDATE_SESSIONS } from "../types";
 
 export const login = payload => dsipatch =>
     service.login(payload)
@@ -15,4 +15,9 @@ export const setImage = image => dsipatch => dsipatch({
 
 export const logout = () => dsipatch => dsipatch({
     type: LOGGED_OUT
+})
+
+export const updateSessions = (payload) => dsipatch => dsipatch({
+    type: UPDATE_SESSIONS,
+    payload
 })

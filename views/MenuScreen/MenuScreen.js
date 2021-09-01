@@ -142,6 +142,7 @@ const MenuScreen = ({
                             imageUri={sessions.image === null ? null : `${asseturl}/${sessions.image}`}
                             onChangeImage={handleChooseImage}
                             onSearch={searchMenu}
+                            onPressUpdateProfile={() => navigation.navigate('Profile')}
                         /> 
                     }
                     showsVerticalScrollIndicator={false}

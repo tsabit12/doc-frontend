@@ -43,6 +43,21 @@ export default {
                 }else{
                     return Promise.reject(message);
                 }
+            }),
+        update: (payload) => axios.request(useService('POST', '/profile/update', payload))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data);
+                }else{
+                    //response error by default can more than one object
+                    //we need to retutn only first object
+                    const firstMessageKey = Object.keys(message)[0];
+                    //return as object
+                    return Promise.reject({
+                        message: message[firstMessageKey]
+                    });
+                }
             })
     }
 }

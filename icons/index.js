@@ -13,3 +13,4 @@ export { default as ArrowForward } from './ArrowForward';
 export { default as CollapseUp } from './CollapseUp';
 export { default as CollapseDown } from './CollapseDown';
 export { default as Plus } from './Plus';
+export { default as Pencil } from './Pencil';

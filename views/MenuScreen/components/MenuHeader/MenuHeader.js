@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { HP, WP } from '../../../config/layout';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { Plus as PlusIcon, Search as SearchIcon } from '../../../../icons';
+import { 
+    Pencil as PencilIcon, 
+    Plus as PlusIcon, 
+    Search as SearchIcon 
+} from '../../../../icons';
 
 const ImageSource = () => (
     <Image 
@@ -25,7 +29,7 @@ ImageUri.propTypes = {
     url: PropTypes.string.isRequired
 }
 
-const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch }) => {
+const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch, onPressUpdateProfile }) => {
     const [search, setsearch] = useState('');
 
     useEffect(() => {
@@ -44,8 +48,12 @@ const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch }) => {
                     <PlusIcon />
                 </TouchableOpacity>
             </View>
-
-            <Text style={styles.fullname} numberOfLines={1}>{ fullname }</Text>
+            <View style={styles.fullnamecontainer}>
+                <Text style={styles.fullname} numberOfLines={1}>{ fullname }</Text>
+                <TouchableOpacity style={styles.updateprofileicon} activeOpacity={0.6} onPress={onPressUpdateProfile}>
+                    <PencilIcon />
+                </TouchableOpacity>
+            </View>
             <View style={styles.center}>
                 <View style={styles.inputbutton}>
                     <TextInput 
@@ -79,11 +87,17 @@ const styles = StyleSheet.create({
         borderRadius: WP('25%') / 2,
         backgroundColor: '#FFF'
     },
-    fullname: {
+    fullnamecontainer: {
         marginTop: 8,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    fullname: {        
         color: '#FFF',
         fontFamily: 'Poppins-Bold',
-        fontSize: RFValue(20)
+        fontSize: RFValue(20),
+        marginLeft: 10
     },
     updateicon: {
         height: WP('6%'), 
@@ -95,6 +109,9 @@ const styles = StyleSheet.create({
         borderRadius: WP('7%') / 2,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    updateprofileicon: {
+        marginLeft: 5
     },
     center: {
         justifyContent: 'center',
@@ -124,6 +141,7 @@ MenuHeader.propTypes = {
     fullname: PropTypes.string.isRequired,
     onChangeImage: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
+    onPressUpdateProfile: PropTypes.func.isRequired,
 }
 
 export default MenuHeader;
