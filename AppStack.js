@@ -33,7 +33,7 @@ const Stack = createStackNavigator();
 const UserRoute = () => {
     return(
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ ...verticalTransition }} />
+            {/* <Stack.Screen name="Home" component={HomeScreen} options={{ ...verticalTransition }} /> */}
             <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
             <Stack.Screen name="KirimanMenginap" component={KirimanMenginap} options={{ ...verticalTransition }} />
             <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
