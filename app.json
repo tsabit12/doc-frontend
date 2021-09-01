@@ -23,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FFF"
+        "backgroundColor": "#DE2715"
       },
       "package": "pos.dashboard.digitalopration.nippos",
       "versionCode": 1,

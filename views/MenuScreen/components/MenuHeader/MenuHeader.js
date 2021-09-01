@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { HP, WP } from '../../../config/layout';
@@ -25,7 +25,17 @@ ImageUri.propTypes = {
     url: PropTypes.string.isRequired
 }
 
-const MenuHeader = ({ imageUri, fullname, onChangeImage }) => {
+const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch }) => {
+    const [search, setsearch] = useState('');
+
+    useEffect(() => {
+        const timeId = setTimeout(() => {
+            onSearch(search);
+        }, 500);
+
+        return () => clearTimeout(timeId);
+    }, [search]);
+
     return(
         <View style={styles.content}>
             <View>
@@ -42,6 +52,8 @@ const MenuHeader = ({ imageUri, fullname, onChangeImage }) => {
                         placeholder='Search menu...'
                         placeholderTextColor='#AEABAB'
                         style={{ height: '100%', flex: 1}}
+                        value={search}
+                        onChangeText={(text) => setsearch(text)}
                     />
                     <View style={{marginLeft: 5}}>
                         <SearchIcon />
@@ -111,6 +123,7 @@ MenuHeader.propTypes = {
     imageUri: PropTypes.string,
     fullname: PropTypes.string.isRequired,
     onChangeImage: PropTypes.func.isRequired,
+    onSearch: PropTypes.func.isRequired,
 }
 
 export default MenuHeader;

@@ -83,18 +83,17 @@ const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => 
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.container}
             >
-                <ScrollView keyboardShouldPersistTaps='handled'>
+                <ScrollView keyboardShouldPersistTaps='handled' showsVerticalScrollIndicator={false}>
                     <View 
                         style={{
                             height: Platform.OS === 'ios' ? HP('92%') : HP('97%'), 
                             justifyContent: 'space-around'
                         }}>
-                        <View style={styles.title}>
-                            <Image 
-                                source={require('../../assets/logo.png')}
-                            />
-                            <Text style={styles.txt}>DIGITAL OPERATION {`\n`}CONTROL</Text>
-                        </View>
+                        <Image 
+                            source={require('../../assets/images/logo.png')}
+                            style={{height: 180, width: '100%', marginTop: 10, marginBottom: 20}}
+                            resizeMode='contain'
+                        />
                         <View style={styles.content}>
                             <View>
                                 <Text style={styles.signitext}>SIGN IN</Text>

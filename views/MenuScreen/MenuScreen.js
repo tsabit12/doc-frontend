@@ -4,7 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { connect } from 'react-redux';
 import { Book as BookIcon } from '../../icons';
 import { GradientLayout } from '../components';
-import { WP } from '../config/layout';
+import { HP, WP } from '../config/layout';
 import PropTypes from 'prop-types';
 import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
@@ -14,16 +14,18 @@ import { setImage, logout } from '../../actions/sessions';
 import { setMessage } from '../../actions/message';
 import { MenuHeader } from './components';
 import { StackActions, useIsFocused } from '@react-navigation/native';
+import { searchMenu } from '../../actions/menus';
 
-const menus = [
-    { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman', route: 'ProduksiKiriman'},
-    { id: '5', title: 'Kiriman Jatuh Tempo', subtitle: '', route: 'JatuhTempo'},
-    { id: '3', title: 'Kiriman Menginap', subtitle: 'Pengendalian Kiriman Potensi Menginap', route: 'Irregulaity' },
-    { id: '4', title: 'Kiriman Terbuka', subtitle: 'Pengendalian Kiriman Terbuka', route: 'ProduksiKiriman'},
-    { id: '6', title: 'Kiriman Irregularitas', subtitle: 'Pengendalian kiriman irregularitas', route: 'Irregulaity'}
-]
-
-const MenuScreen = ({ navigation, sessions, setImage, setMessage, messagenotification, logout }) => {
+const MenuScreen = ({ 
+    navigation, 
+    sessions, 
+    setImage, 
+    setMessage, 
+    messagenotification, 
+    logout,
+    searchMenu,
+    menus
+}) => {
     const [loading, setloading] = useState(false);
     const isFocused = useIsFocused();
 
@@ -133,19 +135,25 @@ const MenuScreen = ({ navigation, sessions, setImage, setMessage, messagenotific
                     data={menus}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
+                    contentContainerStyle={{flexGrow: 1}}
                     ListHeaderComponent={ 
                         <MenuHeader 
                             fullname={sessions.fullname}
                             imageUri={sessions.image === null ? null : `${asseturl}/${sessions.image}`}
                             onChangeImage={handleChooseImage}
+                            onSearch={searchMenu}
                         /> 
                     }
                     showsVerticalScrollIndicator={false}
+                    ListFooterComponentStyle={{flex: 1, justifyContent: 'flex-end'}}
                     ListFooterComponent={
                         <View style={styles.footer}>
                             <Text style={styles.version}>Current version { Constants.manifest.version }</Text>
                         </View>
                     }
+                    ListEmptyComponent={<View style={styles.emptycontainer}>
+                        <Text style={styles.subtitle}>Menu not found</Text>
+                    </View>}
                 />
             </View>            
         </GradientLayout>
@@ -179,11 +187,17 @@ const styles = StyleSheet.create({
     footer: {
         marginTop: 20,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginBottom: 10
     },
     version: {
         color: '#FFF',
         textAlign: 'center'
+    },
+    emptycontainer: {
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        flexGrow: 4
     }
 })
 
@@ -194,13 +208,23 @@ MenuScreen.propTypes = {
     setMessage: PropTypes.func.isRequired,
     messagenotification: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
+    searchMenu: PropTypes.func.isRequired,
+}
+
+const filterMenu = (menus) => {
+    const query = menus.param ? menus.param.toLowerCase() : '';
+
+    return menus.data.filter(menu => menu.title.toLowerCase().indexOf(query) >= 0);
 }
 
 function mapStateToProps(state){
+    const searchData = filterMenu(state.menus);
+    
     return {
         sessions: state.sessions,
-        messagenotification: state.message
+        messagenotification: state.message,
+        menus: searchData
     }
 }
 
-export default connect(mapStateToProps, { setImage, setMessage, logout })(MenuScreen);
+export default connect(mapStateToProps, { setImage, setMessage, logout, searchMenu })(MenuScreen);
