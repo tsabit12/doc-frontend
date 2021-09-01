@@ -1,4 +1,4 @@
-import { LOGGED_IN, SET_IMAGE } from "../types";
+import { LOGGED_IN, LOGGED_OUT, SET_IMAGE } from "../types";
 
 export default function sessions(state={}, action={}){
     switch(action.type){
@@ -9,6 +9,8 @@ export default function sessions(state={}, action={}){
                 ...state,
                 image: action.image
             }
+        case LOGGED_OUT:
+            return {};
         default: 
             return state;
     }

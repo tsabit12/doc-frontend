@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { connect } from 'react-redux';
 import { Book as BookIcon } from '../../icons';
@@ -10,9 +10,10 @@ import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import service, { asseturl } from '../../config/service';
 import { AlertNotifaction, Loading } from '../../components';
-import { setImage } from '../../actions/sessions';
+import { setImage, logout } from '../../actions/sessions';
 import { setMessage } from '../../actions/message';
 import { MenuHeader } from './components';
+import { StackActions, useIsFocused } from '@react-navigation/native';
 
 const menus = [
     { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman', route: 'ProduksiKiriman'},
@@ -22,8 +23,38 @@ const menus = [
     { id: '6', title: 'Kiriman Irregularitas', subtitle: 'Pengendalian kiriman irregularitas', route: 'Irregulaity'}
 ]
 
-const MenuScreen = ({ navigation, sessions, setImage, setMessage, messagenotification }) => {
+const MenuScreen = ({ navigation, sessions, setImage, setMessage, messagenotification, logout }) => {
     const [loading, setloading] = useState(false);
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const backAction = () => {
+            if(isFocused){
+                Alert.alert('Hold on!', 'Are you sure you want to exit?', [
+                    {
+                      text: 'Cancel',
+                      onPress: () => null,
+                      style: 'cancel',
+                    },
+                    { text: 'YES', onPress: () => exitApp() }, 
+                ]);
+            }else{
+                const popActions = StackActions.pop(1);
+                navigation.dispatch(popActions);
+            }
+
+            return true;
+        };
+      
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+        return () => backHandler.remove();
+    }, [isFocused]);
+
+    const exitApp = () => {
+        BackHandler.exitApp();
+        logout();
+    }
 
     const renderItem = ({ item }) => (
         <TouchableOpacity 
@@ -162,6 +193,7 @@ MenuScreen.propTypes = {
     setImage: PropTypes.func.isRequired,
     setMessage: PropTypes.func.isRequired,
     messagenotification: PropTypes.object.isRequired,
+    logout: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state){
@@ -171,4 +203,4 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, { setImage, setMessage })(MenuScreen);
+export default connect(mapStateToProps, { setImage, setMessage, logout })(MenuScreen);
