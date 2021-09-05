@@ -40,3 +40,52 @@ export const generateColor = (index) => {
             return 'black';
     }
 }
+
+//last, 1, day
+export const convertToDateFromString = (last={ title: 'last' }, number={ title: 1 }, periode={title: 'day'}) => {
+    const d             = new Date();
+    let numberValue     = Number(number.title);
+
+    if(last.title.toLowerCase() === 'last'){
+        switch (periode.title.toLowerCase()) {
+            case 'day':
+                d.setDate(d.getDate() - numberValue); break;
+            case 'week':
+                d.setDate(d.getDate() - (numberValue * 7)); break;
+            case 'month':
+                d.setMonth(d.getMonth() - numberValue); break;
+            case 'year':
+                d.setFullYear(d.getFullYear() - numberValue); break;
+            default:
+                break;
+        }
+    }else{
+        switch (periode.title.toLowerCase()) {
+            case 'day':
+                d.setDate(d.getDate() + numberValue); break;
+            case 'week':
+                d.setDate(d.getDate() + (numberValue * 7)); break;
+            case 'month':
+                d.setMonth(d.getMonth() + numberValue); break;
+            case 'year':
+                d.setFullYear(d.getFullYear() + numberValue); break;
+            default:
+                break;
+        }
+    }
+    
+    let defaultday     =  ("0" + (d.getDate())).slice(-2);
+    let defaultmonth   = ("0" + (d.getMonth() + 1)).slice(-2);
+    var defaultyear    = d.getFullYear();
+
+    const currdate  = new Date();
+    let currday     =  ("0" + (currdate.getDate())).slice(-2);
+    let currmonth   = ("0" + (currdate.getMonth() + 1)).slice(-2);
+    var curryear    = currdate.getFullYear();
+
+    if(last.title.toLowerCase() === 'last'){
+        return `${defaultyear}-${defaultmonth}-${defaultday}|${curryear}-${currmonth}-${currday}`;
+    }else{
+        return `${curryear}-${currmonth}-${currday}|${defaultyear}-${defaultmonth}-${defaultday}`;
+    }
+}

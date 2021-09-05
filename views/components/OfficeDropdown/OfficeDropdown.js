@@ -9,20 +9,20 @@ import PropTypes from 'prop-types';
 
 const offices = [
     {title: 'NASIONAL', value: '00'},
-    {title: 'REGIONAL MEDAN', value: '20004'},
-    {title: 'REGIONAL PADANG', value: '25004'},
-    {title: 'REGIONAL PALEMBANG', value: '30004'},
-    {title: 'REGIONAL JAKARTA', value: '10004'},
-    {title: 'REGIONAL BANDUNG', value: '40004'},
-    {title: 'REGIONAL SEMARANG', value: '50004'},
-    {title: 'REGIONAL SURABAYA', value: '60004'},
-    {title: 'REGIONAL DENPASAR', value: '80004'},
-    {title: 'REGIONAL BANJARBARU', value: '70704'},
-    {title: 'REGIONAL MAKASAR', value: '90004'},
-    {title: 'REGIONAL JAYAPURA', value: '99004'},
+    {title: 'REGIONAL MEDAN', value: '1'},
+    {title: 'REGIONAL PADANG', value: '2'},
+    {title: 'REGIONAL PALEMBANG', value: '3'},
+    {title: 'REGIONAL JAKARTA', value: '4'},
+    {title: 'REGIONAL BANDUNG', value: '5'},
+    {title: 'REGIONAL SEMARANG', value: '6'},
+    {title: 'REGIONAL SURABAYA', value: '7'},
+    {title: 'REGIONAL DENPASAR', value: '8'},
+    {title: 'REGIONAL BANJARBARU', value: '9'},
+    {title: 'REGIONAL MAKASAR', value: '10'},
+    {title: 'REGIONAL JAYAPURA', value: '11'},
 ];
 
-const OfficeDropdown = ({ onError }) => {
+const OfficeDropdown = ({ onError, onChoose }) => {
     const kprkRef = useRef({});
     const [field, setfield] = useState({
         regional: 0, //default value by index
@@ -40,6 +40,7 @@ const OfficeDropdown = ({ onError }) => {
                 try {
                     const kprk = [{title: 'SEMUA KPRK', value: '00'}];
                     const getkprk = await service.referensi.kprk({ regional })
+                    
                     getkprk.forEach(row => {
                         kprk.push({title: row.title, value: row.value });
                     });
@@ -58,6 +59,27 @@ const OfficeDropdown = ({ onError }) => {
         }
     }, [field.regional])
 
+    const handleChange = (index, name) => {
+        const params = {
+            regional: '00',
+            kprk: '00'
+        }
+        
+        setfield(prev => ({ ...prev, [name]: index }))
+        if(name === 'regional' && index === 0){ //nasional
+            onChoose(params);
+        }else{
+            if(name === 'kprk'){ //only when kprk choosed
+                params.regional = offices[index].value;
+                params.kprk = kprk[index].value
+                
+                onChoose(params);
+            }
+        }
+
+        // console.log({  });
+    }
+
     const renderListDropdown = (item) => {
         return(
             <View>
@@ -70,7 +92,7 @@ const OfficeDropdown = ({ onError }) => {
         <View style={styles.root}>
             <SelectDropdown
                 data={offices}
-                onSelect={(selectedItem, index) => setfield(prev => ({ ...prev, regional: index }))}
+                onSelect={(selectedItem, index) => handleChange(index, 'regional')}
                 defaultValueByIndex={0}
                 buttonStyle={styles.button}
                 dropdownStyle={{borderRadius: 5, marginTop: 5 }}
@@ -87,7 +109,7 @@ const OfficeDropdown = ({ onError }) => {
             { field.regional !== 0 && <SelectDropdown
                 data={kprk}
                 ref={kprkRef}
-                onSelect={(selectedItem, index) => setfield(prev => ({ ...prev, kprk: index }))}
+                onSelect={(selectedItem, index) => handleChange(index, 'kprk')}
                 defaultValueByIndex={0}
                 buttonStyle={{ ...styles.button, marginRight: 5}}
                 dropdownStyle={{borderRadius: 5, marginTop: 5 }}
@@ -122,6 +144,7 @@ const styles = StyleSheet.create({
 
 OfficeDropdown.propTypes = {
     onError: PropTypes.func.isRequired,
+    onChoose: PropTypes.func.isRequired,
 }
 
 export default OfficeDropdown;

@@ -6,6 +6,7 @@ import { HP, INPUT_HEIGHT, WP } from '../../config/layout';
 import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from 'react-native-datepicker';
 import PropTypes from 'prop-types';
+import { convertToDateFromString } from '../../../utils';
 
 const lastoptions   = [{ title: "Last" }, { title: "Next" }];
 const numberoptions = [{title: '1'}, {title: '5'}, {title: '15'}, {title: '30'}, {title: '50'}, {title: '100'}];
@@ -33,7 +34,7 @@ const DateInput = ({ onDateChoosed, children }) => {
             'Animated: `useNativeDriver`',
             'DatePickerIOS has been merged with DatePickerAndroid and will be removed in a future release.',
             'componentWillReceiveProps has been renamed, and is not recommended for use.'
-        ])
+        ]);
     }, []);
 
     useEffect(() => { 
@@ -109,54 +110,6 @@ const DateInput = ({ onDateChoosed, children }) => {
             easing: Easing.linear,
             useNativeDriver: false
         }).start() 
-    }
-
-    const convertToDateFromString = (last, number, periode) => {
-        const d             = new Date();
-        let numberValue     = Number(number.title);
-
-        if(last.title.toLowerCase() === 'last'){
-            switch (periode.title.toLowerCase()) {
-                case 'day':
-                    d.setDate(d.getDate() - numberValue); break;
-                case 'week':
-                    d.setDate(d.getDate() - (numberValue * 7)); break;
-                case 'month':
-                    d.setMonth(d.getMonth() - numberValue); break;
-                case 'year':
-                    d.setFullYear(d.getFullYear() - numberValue); break;
-                default:
-                    break;
-            }
-        }else{
-            switch (periode.title.toLowerCase()) {
-                case 'day':
-                    d.setDate(d.getDate() + numberValue); break;
-                case 'week':
-                    d.setDate(d.getDate() + (numberValue * 7)); break;
-                case 'month':
-                    d.setMonth(d.getMonth() + numberValue); break;
-                case 'year':
-                    d.setFullYear(d.getFullYear() + numberValue); break;
-                default:
-                    break;
-            }
-        }
-        
-        let defaultday     =  ("0" + (d.getDate())).slice(-2);
-        let defaultmonth   = ("0" + (d.getMonth() + 1)).slice(-2);
-        var defaultyear    = d.getFullYear();
-
-        const currdate  = new Date();
-        let currday     =  ("0" + (currdate.getDate())).slice(-2);
-        let currmonth   = ("0" + (currdate.getMonth() + 1)).slice(-2);
-        var curryear    = currdate.getFullYear();
-
-        if(last.title.toLowerCase() === 'last'){
-            return `${defaultday}-${defaultmonth}-${defaultyear}|${currday}-${currmonth}-${curryear}`;
-        }else{
-            return `${currday}-${currmonth}-${curryear}|${defaultday}-${defaultmonth}-${defaultyear}`;
-        }
     }
 
     return(

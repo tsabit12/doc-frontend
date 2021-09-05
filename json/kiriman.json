@@ -1,13 +1,13 @@
 [
     { "title": "left-spacer"},
-    { "title": "Jumlah Transaksi", "jumlah": 600, "satuan": "Resi" }, 
-    { "title": "Total Berat", "jumlah": 300, "satuan": "Kg" },
-    { "title": "Ongkir", "jumlah": 450, "satuan": "Rupiah" },
-    { "title": "PPN", "jumlah": 500, "satuan": "Rupiah" },
-    { "title": "Total Ongkir", "jumlah": 100, "satuan": "Rupiah" },
-    { "title": "Transksi KPC", "jumlah": 79, "satuan": "Resi" },
-    { "title": "Transksi Agenpos", "jumlah": 300, "satuan": "Resi" },
-    { "title": "Transksi Korporat", "jumlah": 450, "satuan": "Resi" },
-    { "title": "Transksi KPRK", "jumlah": 130, "satuan": "Resi" },
+    { "title": "Jumlah Transaksi", "jumlah": "0", "satuan": "Resi" }, 
+    { "title": "Total Berat", "jumlah": "0", "satuan": "Kg" },
+    { "title": "Ongkir", "jumlah": "0", "satuan": "Rupiah" },
+    { "title": "PPN", "jumlah": "0", "satuan": "Rupiah" },
+    { "title": "Total Ongkir", "jumlah": "0", "satuan": "Rupiah" },
+    { "title": "Transksi KPC", "jumlah": "0", "satuan": "Resi" },
+    { "title": "Transksi Agenpos", "jumlah": "0", "satuan": "Resi" },
+    { "title": "Transksi Korporat", "jumlah": "0", "satuan": "Resi" },
+    { "title": "Transksi KPRK", "jumlah": "0", "satuan": "Resi" },
     { "title": "right-spacer"}
 ]

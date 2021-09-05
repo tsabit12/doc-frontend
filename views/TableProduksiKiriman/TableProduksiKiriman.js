@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Animated, FlatList, LayoutAnimation, Platform, StyleSheet, Text, TouchableOpacity, UIManager, View } from 'react-native';
+import { FlatList, LayoutAnimation, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, UIManager, View } from 'react-native';
 import { GradientLayout, HeaderLayout } from '../components';
 import PropTypes from 'prop-types';
 import defaultstyles from '../config/styles';
 import { AngleLeft, CollapseDown, CollapseUp } from '../../icons';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { rupiahNumber } from '../../utils';
+import { WP } from '../config/layout';
 
 if (
     Platform.OS === "android" &&
@@ -30,39 +31,45 @@ const TableProduksiKiriman = ({ navigation, route }) => {
         let activeItem = active.includes(index);
 
         return(
-            <View style={styles.row}>
-                <View style={styles.tr}>
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => handleCollapse(activeItem, index)}>
-                        { activeItem ?  <CollapseUp /> : <CollapseDown /> }
-                    </TouchableOpacity>
-                    <Text style={{ ...styles.td, flex: 1 }}>Resi/Connote</Text>
-                    <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.connote}</Text>
-                </View>
-
-                { activeItem && <Animated.View style={styles.subtr}>
+            <View>
+                <TouchableNativeFeedback 
+                    onPress={() => handleCollapse(activeItem, index)} 
+                    activeOpacity={0.7}
+                    background={TouchableNativeFeedback.Ripple('#E9E9E9', false)}
+                >    
                     <View style={styles.tr}>
+                        { activeItem ?  <CollapseUp /> : <CollapseDown /> }
+                    
+                        <Text style={{ ...styles.td, flex: 1 }}>Resi/Connote ({index+1})</Text>
+                        <Text style={{ ...styles.td, color: '#A7A6A6'}}>{item.connote_code}</Text>
+                    </View>
+                </TouchableNativeFeedback>
+                
+
+                { activeItem && <View style={styles.subtr}>
+                    <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Asal kantor kirim</Text>
-                        <Text style={styles.collapsetd}>{item.asal_kantor_kirim}</Text>
+                        <Text style={styles.collapsetd} numberOfLines={1}>{item.location_code}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Petugas</Text>
-                        <Text style={styles.collapsetd}>{item.nama_petugas}</Text>
+                        <Text style={styles.collapsetd} numberOfLines={1}>{item.nama_pengguna}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Layanan</Text>
-                        <Text style={styles.collapsetd}>{item.layanan}</Text>
+                        <Text style={styles.collapsetd} numberOfLines={1}>{item.service}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Berat</Text>
-                        <Text style={styles.collapsetd}>{rupiahNumber(item.berat)}</Text>
+                        <Text style={styles.collapsetd} numberOfLines={1}>{rupiahNumber(item.berat)}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Nama Pengirim</Text>
-                        <Text style={styles.collapsetd}>{item.nama_pengirim}</Text>
+                        <Text style={styles.collapsetd} numberOfLines={1}>{item.pengirim}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Ongkir</Text>
-                        <Text style={styles.collapsetd}>{rupiahNumber(item.Ongkir)}</Text>
+                        <Text style={styles.collapsetd}>{rupiahNumber(item.ongkir)}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>PPN</Text>
@@ -72,15 +79,26 @@ const TableProduksiKiriman = ({ navigation, route }) => {
                         <Text style={{ ...styles.td, flex: 1 }}>Total</Text>
                         <Text style={styles.collapsetd}>{rupiahNumber(item.total)}</Text>
                     </View>
-                </Animated.View> }
+                    <View style={styles.collapsetr}>
+                        <Text style={{ ...styles.td, flex: 1 }}>Created at</Text>
+                        <Text style={styles.collapsetd}>{item.created}</Text>
+                    </View>
+                </View> }
             </View>
         )
+    }
+
+    const SeparatorComponent = () => {
+        return <View style={styles.border} />
     }
 
     return(
         <GradientLayout>
             <HeaderLayout 
-                title={<Text style={styles.title}>Detail produksi kiriman</Text>}
+                title={<View style={{flex: 1}}>
+                    <Text style={styles.title}>Detail produksi kiriman</Text>
+                    <Text style={styles.subtitle} numberOfLines={1}>{ data.length } Resi</Text>
+                </View>}
                 lefticon={<TouchableOpacity activeOpacity={0.8} onPress={() => navigation.goBack()}>
                     <AngleLeft />
                 </TouchableOpacity>} 
@@ -88,9 +106,19 @@ const TableProduksiKiriman = ({ navigation, route }) => {
             <View style={styles.content}>
                 <FlatList 
                     data={data}
-                    keyExtractor={(item) => item.connote}
+                    contentContainerStyle={{flexGrow: 1}}
+                    keyExtractor={(item) => item.connote_code}
                     renderItem={renderItem}
                     showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={<View style={styles.centered}>
+                        <Text>Data tidak ditemukan</Text>
+                    </View>}
+                    ItemSeparatorComponent={SeparatorComponent}
+                    removeClippedSubviews={true} // Unmount components when outside of window 
+                    initialNumToRender={2} // Reduce initial render amount
+                    maxToRenderPerBatch={10} // Reduce number in each render batch
+                    updateCellsBatchingPeriod={100} // Increase time between renders
+                    windowSize={7} // Reduce the window size
                 />
             </View>
         </GradientLayout>
@@ -98,23 +126,21 @@ const TableProduksiKiriman = ({ navigation, route }) => {
 }
 
 const styles = StyleSheet.create({
-    title: { ...defaultstyles.headertitle, marginTop: 5 },
+    title: { ...defaultstyles.headertitle },
+    subtitle: { ...defaultstyles.headersubtitle, marginTop: Platform.OS === 'ios' ? -4 : -10 }, 
     content: {
         flex: 1,
         marginTop: 8,
         backgroundColor: '#FFF'
     },
     row: {
-        marginVertical: 5,
-        borderBottomWidth: 0.8,
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderColor: '#A7A6A6'
+        paddingLeft: 5
     },
     tr: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 7
+        paddingVertical: 15,
+        paddingLeft: 5
     },
     td: {
         marginHorizontal: 10,
@@ -122,18 +148,30 @@ const styles = StyleSheet.create({
         marginTop: -5
     },
     subtr: {
-        marginLeft: 25, //icon size
+        marginLeft: 30, //icon size + padding left
     },
     collapsetr: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 5
+        marginVertical: 5
     },
     collapsetd: {
         marginHorizontal: 10,
         fontSize: RFValue(12), 
         marginTop: -5,
-        color: '#A7A6A6'
+        color: '#A7A6A6',
+        width: WP('50%'),
+        textAlign: 'right'
+    },
+    centered: {
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center'
+    },
+    border: {
+        height: 0.4,
+        backgroundColor: '#A7A6A6',
+        // paddingTop: 2,
     }
 })
 
