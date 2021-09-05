@@ -69,15 +69,13 @@ const OfficeDropdown = ({ onError, onChoose }) => {
         if(name === 'regional' && index === 0){ //nasional
             onChoose(params);
         }else{
-            if(name === 'kprk'){ //only when kprk choosed
-                params.regional = offices[index].value;
+            if(name === 'kprk'){ 
+                params.regional = offices[field.regional].value; //get from state cause index is kprk
                 params.kprk = kprk[index].value
-                
-                onChoose(params);
+                onChoose(params); //only when kprk choosed
             }
         }
 
-        // console.log({  });
     }
 
     const renderListDropdown = (item) => {

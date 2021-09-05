@@ -160,15 +160,13 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
     const onSearch = async (payload) => {
         if(!loading) { setloading(true) }
 
+        console.log(payload);
+
         try {
             const get = await service.produksikiriman.get(payload);
             setdata(get.data);
             //update date range for get current selected with another method 
             //like by office 
-            setdaterange({ 
-                startdate: payload.startdate,
-                enddate: payload.enddate
-            });
         } catch (error) {
             setdata([]);
             setslider(defaultslider);
@@ -178,6 +176,11 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
                 setMessage({ open: true, message: 'Unknown Error' });
             }
         }
+
+        setdaterange({ 
+            startdate: payload.startdate,
+            enddate: payload.enddate
+        });
 
         setloading(false);
     }
