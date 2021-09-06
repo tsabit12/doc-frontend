@@ -8,47 +8,27 @@ import { PieChart } from 'react-native-svg-charts';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { convertToDateFromString, generateColor } from '../../utils';
 import defaultslider from '../../json/kiriman.json';
-import sebaranreg from '../../json/kiriman_sebaranreg.json';
-import sebarankprk from '../../json/kiriman_sebarankprk.json';
-import koorporat from '../../json/kiriman_korporat.json'
-import koorporatrevenue from '../../json/kiriman_korporatrevenue.json';
-import agenpos from '../../json/kiriman_agenpos.json';
-import datatable from '../../json/kiriman_table.json';
-
 import { setMessage } from '../../actions/message';
 import PropTypes from 'prop-types';
-
 import { Bar } from './components';
 import service from '../../config/service';
 import { connect } from 'react-redux';
 import { AlertNotifaction, Loading } from '../../components';
 
 const options = [
-    { title: 'Sebaran Regional', type: 'pie' },
-    { title: 'Sebaran KPRK', type: 'pie' },
-    { title: 'Grafik Transaksi Korporat', type: 'bar' },
-    { title: 'Grafik Revenue Korporat', type: 'bar' },
-    { title: 'Grafik Transaksi Agenpos', type: 'bar' },
+    { title: 'Sebaran Regional', type: 'pie', key: 'regional' },
+    { title: 'Sebaran KPRK', type: 'pie', key: 'location_code' },
+    { title: 'Grafik Transaksi Korporat', type: 'bar', key: '3' },
+    { title: 'Grafik Transaksi Agenpos', type: 'bar', key: 'AGENPOS', filterkey: 'location_type' },
 ]
-
-const getData = (optionIndex) => {
-    switch (optionIndex) {
-        case 0: return sebaranreg;
-        case 1: return sebarankprk;
-        case 2: return koorporat;
-        case 3: return koorporatrevenue;
-        case 4: return agenpos;
-        default: return [];
-    }
-}
 
 const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification }) => {
     const { params } = route;
     const [loading, setloading] = useState(true);
-    const [datapie, setdatapie] = useState([]);
     const [option, setoption] = useState({
         value: 0,
-        type: 'pie'
+        type: 'pie',
+        data: []
     });
 
     const [data, setdata] = useState([]);
@@ -112,26 +92,6 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
         }
     }, [data]);
 
-    useEffect(() => { 
-        const { value, type } = option;
-        const datapie = [];
-        let json = getData(value);
-        
-        json.forEach((row, index) => {
-            datapie.push({
-                key: index,
-                name: row.title,
-                jumlah: row.jumlah,
-                svg: {
-                    fill: type === 'pie' ? generateColor(index) : 'rgba(134, 65, 244, 0.8)'
-                }
-            })
-        });
-
-        setdatapie(datapie);
-
-    }, [option]);
-
     const renderDot = ({ item  }) => {
         return(
             <View style={styles.dotlist}>
@@ -145,7 +105,7 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
         <PieChart
             style={{ height: 270, width: '100%', marginTop: 10 }}
             valueAccessor={({ item }) => item.jumlah}
-            data={datapie}
+            data={option.data}
             spacing={0}
             outerRadius={'95%'}
         />
@@ -160,15 +120,15 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
     const onSearch = async (payload) => {
         if(!loading) { setloading(true) }
 
-        console.log(payload);
-
         try {
             const get = await service.produksikiriman.get(payload);
             setdata(get.data);
-            //update date range for get current selected with another method 
-            //like by office 
+
+            //passing data to render pie/bar data not from state
+            chooseGrafik(0, get.data); 
         } catch (error) {
             setdata([]);
+            chooseGrafik(0, []); 
             setslider(defaultslider);
             if(error.message){
                 setMessage({ open: true, message: error.message });
@@ -177,6 +137,8 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
             }
         }
 
+        //update date range for get current selected with another method 
+        //like by office     
         setdaterange({ 
             startdate: payload.startdate,
             enddate: payload.enddate
@@ -188,6 +150,39 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
     const handleChangeOffice = (office) => {
         setoffice(prev => ({ ...prev, ...office })); //kprk and regional
         onSearch({ ...office, status: '00', ...daterange });
+    }
+
+    const chooseGrafik = (index, defaultdata=data) => {
+        let option  = options[index].key;
+        const type  = options[index].type;
+
+        if(option === 'AGENPOS'){
+            option = 'nopen';
+            var filtered = defaultdata.filter(k => k[options[index].filterkey] === options[index].key)
+        }else{
+            var filtered = defaultdata.filter(k => k[option] != null);
+        }
+
+        const groupedObject = filtered.reduce((obj, keys) => {
+            const count = obj[keys[option]] || 0
+            return { ...obj, [keys[option]]: count + 1 }
+        }, {});
+
+        let arr = Object.entries(groupedObject).map((k, index) => ( { 
+            key: index,
+            name: k[0],
+            jumlah: k[1],
+            svg: {
+                fill: type === 'pie' ? generateColor() : 'rgba(134, 65, 244, 0.8)'
+            }
+        } ));
+        
+        setoption(prev => ({ 
+            ...prev, 
+            value: index,
+            type,
+            data: arr
+        }))
     }
 
     return (
@@ -224,17 +219,13 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
                             <DropDown 
                                 indexvalue={option.value}
                                 options={options}
-                                onChoose={(index) => setoption(prev => ({ 
-                                    ...prev, 
-                                    value: index,
-                                    type: options[index].type
-                                }))}
+                                onChoose={(index) => chooseGrafik(index)}
                             />
 
                             { option.type === 'pie' && <React.Fragment>
                                 { renderPie() }
                                 <FlatList 
-                                    data={datapie}
+                                    data={option.data}
                                     keyExtractor={(item) => item.name}
                                     renderItem={renderDot}
                                     horizontal={true}
@@ -242,7 +233,7 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
                                     contentContainerStyle={{marginTop: 10}}
                                 />
                             </React.Fragment> }
-                            { option.type === 'bar' && <Bar data={datapie} />}
+                            { option.type === 'bar' && <Bar data={option.data} />}
                         </View>
                     </React.Fragment>
                 </DateInput>
