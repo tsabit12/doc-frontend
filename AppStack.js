@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { 
@@ -15,11 +15,13 @@ import {
     Profile
 } from './views';
 import PropTypes from 'prop-types';
+import { AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import { 
     vertical as verticalTransition, 
     horizontal as horizontalTransition 
 } from './views/config/transition';
+import { setLoggedIn } from './actions/sessions';
 
 const themes = {
     ...DefaultTheme,
@@ -61,21 +63,43 @@ const GuestRoute = () => {
     )
 }
 
-const AppStack = ({ sessions, updateAvailable }) => {
-    if(updateAvailable){
-        return <UpdatesView />;
+const AppStack = ({ sessions, updateAvailable, setLoggedIn }) => {
+    const [mount, setmount] = useState(false);
+
+    useEffect(() => {
+        (async() => {
+            try {
+                const sess = await AsyncStorage.getItem('sessions');   
+                if (sess !== null) {
+                    setLoggedIn(JSON.parse(sess))
+                }
+            } catch (error) {
+                console.log({ error });
+            }
+
+            setmount(true);
+        })();
+    }, []);
+
+    if(mount){
+        if(updateAvailable){
+            return <UpdatesView />;
+        }else{
+            return(
+                <NavigationContainer theme={themes}>
+                    { Object.keys(sessions).length > 0 ? <UserRoute /> : <GuestRoute /> }
+                </NavigationContainer>
+            )
+        }
     }else{
-        return(
-            <NavigationContainer theme={themes}>
-                { Object.keys(sessions).length > 0 ? <UserRoute /> : <GuestRoute /> }
-            </NavigationContainer>
-        )
+        return null;
     }
 }
 
 AppStack.propTypes = {
     sessions: PropTypes.object.isRequired,
     updateAvailable: PropTypes.bool.isRequired,
+    setLoggedIn: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state){
@@ -84,4 +108,4 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, null)(AppStack);
+export default connect(mapStateToProps, { setLoggedIn })(AppStack);
