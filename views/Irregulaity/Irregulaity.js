@@ -9,6 +9,8 @@ import { HP } from '../config/layout';
 import { RFValue } from 'react-native-responsive-fontsize';
 import slider from '../../json/irregularity.json';
 import irregular from '../../json/irregularity_perbandingan.json';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const options = [
     { title: 'Perbandingan', type: 'bar' }
@@ -21,7 +23,7 @@ const getData = (optionIndex) => {
     }
 }
 
-const Irregulaity = ({ navigation, route }) => {
+const Irregulaity = ({ navigation, route, region }) => {
     const { params } = route;
     const [datapie, setdatapie] = useState([]);
     const [option, setoption] = useState({
@@ -87,6 +89,7 @@ const Irregulaity = ({ navigation, route }) => {
                         <View style={{marginTop: 11}}>
                             <OfficeDropdown
                                 onError={(message) => setMessage({ open: true, message })}
+                                offices={region}
                             />
                             <SliderAnimation listitem={slider} />
                         </View>
@@ -160,4 +163,14 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Irregulaity;
+Irregulaity.propTypes = {
+    region: PropTypes.array.isRequired,
+}
+
+function mapStateToProps(state){
+    return{
+        region: state.region
+    }
+}
+
+export default connect(mapStateToProps, null)(Irregulaity);

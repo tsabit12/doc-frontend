@@ -7,22 +7,22 @@ import { useState, useEffect } from 'react';
 import service from '../../../config/service';
 import PropTypes from 'prop-types';
 
-const offices = [
-    {title: 'NASIONAL', value: '00'},
-    {title: 'REGIONAL MEDAN', value: '1'},
-    {title: 'REGIONAL PADANG', value: '2'},
-    {title: 'REGIONAL PALEMBANG', value: '3'},
-    {title: 'REGIONAL JAKARTA', value: '4'},
-    {title: 'REGIONAL BANDUNG', value: '5'},
-    {title: 'REGIONAL SEMARANG', value: '6'},
-    {title: 'REGIONAL SURABAYA', value: '7'},
-    {title: 'REGIONAL DENPASAR', value: '8'},
-    {title: 'REGIONAL BANJARBARU', value: '9'},
-    {title: 'REGIONAL MAKASAR', value: '10'},
-    {title: 'REGIONAL JAYAPURA', value: '11'},
-];
+// const offices = [
+//     {title: 'NASIONAL', value: '00'},
+//     {title: 'REGIONAL MEDAN', value: '1'},
+//     {title: 'REGIONAL PADANG', value: '2'},
+//     {title: 'REGIONAL PALEMBANG', value: '3'},
+//     {title: 'REGIONAL JAKARTA', value: '4'},
+//     {title: 'REGIONAL BANDUNG', value: '5'},
+//     {title: 'REGIONAL SEMARANG', value: '6'},
+//     {title: 'REGIONAL SURABAYA', value: '7'},
+//     {title: 'REGIONAL DENPASAR', value: '8'},
+//     {title: 'REGIONAL BANJARBARU', value: '9'},
+//     {title: 'REGIONAL MAKASAR', value: '10'},
+//     {title: 'REGIONAL JAYAPURA', value: '11'},
+// ];
 
-const OfficeDropdown = ({ onError, onChoose }) => {
+const OfficeDropdown = ({ onError, onChoose, offices }) => {
     const kprkRef = useRef({});
     const [field, setfield] = useState({
         regional: 0, //default value by index
@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
 OfficeDropdown.propTypes = {
     onError: PropTypes.func.isRequired,
     onChoose: PropTypes.func.isRequired,
+    offices: PropTypes.array.isRequired,
 }
 
 export default OfficeDropdown;

@@ -22,7 +22,7 @@ const options = [
     { title: 'Grafik Transaksi Agenpos', type: 'bar', key: 'AGENPOS', filterkey: 'location_type' },
 ]
 
-const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification }) => {
+const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification, region }) => {
     const { params } = route;
     const [loading, setloading] = useState(true);
     const [option, setoption] = useState({
@@ -113,7 +113,8 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
 
     const handlePressDetail = () => {
         navigation.navigate('TableProduksiKiriman', {
-            data
+            data,
+            slider: []
         })
     }
 
@@ -212,6 +213,7 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification })
                             <OfficeDropdown
                                 onError={(message) => setMessage({ open: true, message })}
                                 onChoose={handleChangeOffice}
+                                offices={region}
                             />
                             <SliderAnimation listitem={slider} onPressDetail={handlePressDetail}/>
                         </View>
@@ -283,11 +285,13 @@ const styles = StyleSheet.create({
 ProduksiKiriman.propTypes = {
     setMessage: PropTypes.func.isRequired,
     messagenotification: PropTypes.object.isRequired,
+    region: PropTypes.array.isRequired,
 }
 
 function mapStateToProps(state){
     return {
-        messagenotification: state.message
+        messagenotification: state.message,
+        region: state.region
     }
 }
 

@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
-import { FlatList, LayoutAnimation, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, UIManager, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, LayoutAnimation, Platform, ScrollView, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, UIManager, View } from 'react-native';
 import { GradientLayout, HeaderLayout } from '../components';
 import PropTypes from 'prop-types';
 import defaultstyles from '../config/styles';
 import { AngleLeft, CollapseDown, CollapseUp } from '../../icons';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { rupiahNumber } from '../../utils';
-import { WP } from '../config/layout';
+import { HP, WP } from '../config/layout';
+
+const getStateMenginap = (created, currdate, status) => {
+    let res = false;
+
+    if(created === currdate){
+        if(status !== 'R7' || status !== 'DELIVERED'){
+            res = true;
+        }
+    }
+    return res;
+}
 
 if (
     Platform.OS === "android" &&
@@ -17,14 +28,27 @@ if (
 
 const TableProduksiKiriman = ({ navigation, route }) => {
     const [active, setActive] = useState([]);
-    const { data } = route.params;
+    const [list, setlist] = useState({
+        activeIndex: 0,
+        data: []
+    });
+    const { data, slider } = route.params;
+
+    useEffect(() => {
+        if(data.length > 0){
+            setlist(prev => ({ ...prev, data, activeIndex: 0 }))
+        }
+    }, [data]);
 
     const handleCollapse = (isActive, index) => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        
         if(isActive){
             setActive(active.filter(row => row !== index))
         }else{
-            setActive(prev => [...prev, index])}
+            setActive(prev => [...prev, index])
+        }
+
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     }
 
     const renderItem = ({ item, index }) => {
@@ -54,6 +78,10 @@ const TableProduksiKiriman = ({ navigation, route }) => {
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Petugas</Text>
                         <Text style={styles.collapsetd} numberOfLines={1}>{item.nama_pengguna}</Text>
+                    </View>
+                    <View style={styles.collapsetr}>
+                        <Text style={{ ...styles.td, flex: 1 }}>status</Text>
+                        <Text style={styles.collapsetd} numberOfLines={1}>{item.status}</Text>
                     </View>
                     <View style={styles.collapsetr}>
                         <Text style={{ ...styles.td, flex: 1 }}>Layanan</Text>
@@ -92,11 +120,60 @@ const TableProduksiKiriman = ({ navigation, route }) => {
         return <View style={styles.border} />
     }
 
+    const handleFilter = (index, key) => {
+        let filter = data;
+
+        if(key === 'ontime'){
+            filter = data.filter(item => item.updated_at <= item.sla_date && item.status === 'DELIVERED');
+        }else if(key === 'jatuhtempo'){
+            filter = data.filter(item => item.currentdate = item.sla_date && item.status !== 'DELIVERED');
+        }else if(key === 'oversla'){
+            filter = data.filter(item => item.currentdate > item.sla_date && item.status !== 'DELIVERED');
+        }else if(key === 'menginap'){
+            filter = data.filter(item => getStateMenginap(item.created_at, item.currentdate, item.status));
+        }
+
+        setlist({
+            activeIndex: index,
+            data: filter
+        })
+    }
+
+    const HeaderComponent = () => {
+        if(slider.length > 0){
+            return(
+                <ScrollView 
+                    horizontal={true} 
+                    contentContainerStyle={{paddingVertical: 10, backgroundColor: '#FFF'}} 
+                    showsHorizontalScrollIndicator={false}
+                >
+                    { slider.map((row, index) => 
+                        <TouchableOpacity 
+                            style={{ 
+                                ...styles.button,
+                                backgroundColor: index === list.activeIndex ? '#FA6901' : '#FFF'
+                            }} 
+                            key={row.title} 
+                            activeOpacity={0.9}
+                            onPress={() => handleFilter(index, row.key)}
+                        >
+                            <Text style={{color: index === list.activeIndex ? '#FFF' : '#FA6901', textAlign: 'center'}} numberOfLines={1}>
+                                { row.title }
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                </ScrollView>
+            )
+        }else{
+            return null;
+        }
+    }
+
     return(
         <GradientLayout>
             <HeaderLayout 
                 title={<View style={{flex: 1}}>
-                    <Text style={styles.title}>Detail produksi kiriman</Text>
+                    <Text style={styles.title}>Detail kiriman</Text>
                     <Text style={styles.subtitle} numberOfLines={1}>{ data.length } Resi</Text>
                 </View>}
                 lefticon={<TouchableOpacity activeOpacity={0.8} onPress={() => navigation.goBack()}>
@@ -105,7 +182,7 @@ const TableProduksiKiriman = ({ navigation, route }) => {
             />
             <View style={styles.content}>
                 <FlatList 
-                    data={data}
+                    data={list.data}
                     contentContainerStyle={{flexGrow: 1}}
                     keyExtractor={(item) => item.connote_code}
                     renderItem={renderItem}
@@ -114,6 +191,8 @@ const TableProduksiKiriman = ({ navigation, route }) => {
                         <Text>Data tidak ditemukan</Text>
                     </View>}
                     ItemSeparatorComponent={SeparatorComponent}
+                    stickyHeaderIndices={[0]}
+                    ListHeaderComponent={HeaderComponent}
                     removeClippedSubviews={true} // Unmount components when outside of window 
                     initialNumToRender={2} // Reduce initial render amount
                     maxToRenderPerBatch={10} // Reduce number in each render batch
@@ -172,6 +251,17 @@ const styles = StyleSheet.create({
         height: 0.4,
         backgroundColor: '#A7A6A6',
         // paddingTop: 2,
+    },
+    button: {
+        height: HP('5%'),
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 3,
+        width: WP('30%'),
+        borderWidth: 0.8,
+        borderColor: '#FA6901',
+        marginHorizontal: 5,
+        paddingHorizontal: 5
     }
 })
 
@@ -179,6 +269,7 @@ TableProduksiKiriman.propTypes = {
     route: PropTypes.shape({
         params: PropTypes.shape({
             data: PropTypes.array.isRequired,
+            slider: PropTypes.array.isRequired,
         }).isRequired,
     }).isRequired,
 }
