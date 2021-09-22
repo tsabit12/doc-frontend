@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "599936007364",
+    "project_id": "digital-oc",
+    "storage_bucket": "digital-oc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599936007364:android:c116de75af3da0f0b9dd91",
+        "android_client_info": {
+          "package_name": "pos.dashboard.digitalopration.nippos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599936007364-3hu70otlo24qpo1af2dh0hg70i321k0s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEPujiz2Yaixvr9153m0q2fV4ri24FRP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599936007364-3hu70otlo24qpo1af2dh0hg70i321k0s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

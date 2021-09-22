@@ -1,3 +1,7 @@
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+
 export const toQueryString = (obj) => {
     var parts = [];
     for (var i in obj) {
@@ -73,3 +77,36 @@ export const convertToDateFromString = (last={ title: 'last' }, number={ title: 
         return `${curryear}-${currmonth}-${currday}|${defaultyear}-${defaultmonth}-${defaultday}`;
     }
 }
+
+export const registerForPushNotificationsAsync = async () => {
+    let token;
+
+    if (Constants.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+       
+        if (finalStatus !== 'granted') {
+          return Promise.reject({ msg: 'Failed to get push token for push notification!'});
+        }
+
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+    } else {
+        return Promise.reject({ msg: 'Must use physical device for Push Notifications'});
+    }
+  
+    if (Platform.OS === 'android') {
+        Notifications.setNotificationChannelAsync('default-doc', {
+            name: 'doc default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+            sound: 'mixkit-bell-notification-933.wav'
+        });
+    }
+  
+    return Promise.resolve(token);
+  }

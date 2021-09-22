@@ -58,7 +58,19 @@ export default {
                         message: message[firstMessageKey]
                     });
                 }
-            })
+            }),
+        addToken: (payload) => axios.request(useService('POST', '/profile/token', payload))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data);
+                }else{
+                    const firstMessageKey = Object.keys(message)[0];
+                    return Promise.reject({
+                        message: message[firstMessageKey]
+                    });
+                }
+            }),
     },
     produksikiriman: {
         get: (payload) => axios.request(useService('POST', '/Report_Detail_Transaksi', payload))

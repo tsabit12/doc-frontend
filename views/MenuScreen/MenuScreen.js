@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, BackHandler, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, AsyncStorage, BackHandler, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { connect } from 'react-redux';
 import { Book as BookIcon } from '../../icons';
@@ -15,6 +15,16 @@ import { setMessage } from '../../actions/message';
 import { MenuHeader } from './components';
 import { StackActions, useIsFocused } from '@react-navigation/native';
 import { searchMenu } from '../../actions/menus';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotificationsAsync } from '../../utils';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+});
 
 const MenuScreen = ({ 
     navigation, 
@@ -28,6 +38,33 @@ const MenuScreen = ({
 }) => {
     const [loading, setloading] = useState(false);
     const isFocused = useIsFocused();
+
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(async token => {
+            // console.log({ token });
+            const payload = {
+                userid: sessions.userid,
+                token
+            }
+
+            try {
+                await service.profile.addToken(payload);
+            } catch (error) {
+                if(error.message){
+                    setMessage({ open: true, message: error.message });
+                }else{
+                    setMessage({ open: true, message: 'Unknown error' });
+                }
+            }
+        })
+        .catch(error => {
+            if(error.msg){
+                setMessage({ open: true, message: error.msg });
+            }else{
+                setMessage({ open: true, message: 'Cannote send notification' });
+            }
+        })
+    }, [])
 
     useEffect(() => {
         const backAction = () => {
@@ -55,7 +92,7 @@ const MenuScreen = ({
 
     const exitApp = () => {
         BackHandler.exitApp();
-        logout();
+        // logout();
     }
 
     const renderItem = ({ item }) => (
@@ -123,6 +160,26 @@ const MenuScreen = ({
         setloading(false);
     }
 
+    const handleLogout = () => {
+        Alert.alert('Are you sure you want to logout?', 'After logout.. you may not receive the notifications we send', [
+            {
+              text: 'Cancel',
+              onPress: () => null,
+              style: 'cancel',
+            },
+            { text: 'YES', onPress: () => onLogout() }, 
+        ]);
+    }
+
+    const onLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('sessions');
+            logout();
+        } catch (error) {
+            alert("Logout failed");
+        }
+    }
+
     return(
         <GradientLayout>
             <Loading open={loading} />
@@ -143,6 +200,7 @@ const MenuScreen = ({
                             onChangeImage={handleChooseImage}
                             onSearch={searchMenu}
                             onPressUpdateProfile={() => navigation.navigate('Profile')}
+                            onClickLogout={handleLogout}
                         /> 
                     }
                     showsVerticalScrollIndicator={false}
