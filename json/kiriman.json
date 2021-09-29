@@ -2,12 +2,5 @@
     { "title": "left-spacer"},
     { "title": "Jumlah Transaksi", "jumlah": "0", "satuan": "Resi" }, 
     { "title": "Total Berat", "jumlah": "0", "satuan": "Kg" },
-    { "title": "Ongkir", "jumlah": "0", "satuan": "Rupiah" },
-    { "title": "PPN", "jumlah": "0", "satuan": "Rupiah" },
-    { "title": "Total Ongkir", "jumlah": "0", "satuan": "Rupiah" },
-    { "title": "Transksi KPC", "jumlah": "0", "satuan": "Resi" },
-    { "title": "Transksi Agenpos", "jumlah": "0", "satuan": "Resi" },
-    { "title": "Transksi Korporat", "jumlah": "0", "satuan": "Resi" },
-    { "title": "Transksi KPRK", "jumlah": "0", "satuan": "Resi" },
     { "title": "right-spacer"}
 ]

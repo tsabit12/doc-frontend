@@ -85,6 +85,19 @@ export default {
                         message: message[firstMessageKey]
                     });
                 }
-            })
+            }),
+        jatuhtempo: (payload) => axios.request(useService('GET', '/jatuhtempo', payload))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data);
+                }else{
+                    const firstMessageKey = Object.keys(message)[0];
+                    //return as object
+                    return Promise.reject({
+                        message: message[firstMessageKey]
+                    });
+                }
+            }),
     }
 }

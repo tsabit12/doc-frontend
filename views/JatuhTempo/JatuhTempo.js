@@ -6,7 +6,7 @@ import { HP } from '../config/layout';
 import defaultstyles from '../config/styles';
 import { PieChart } from 'react-native-svg-charts';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { convertToDateFromString, generateColor } from '../../utils';
+import { generateColor } from '../../utils';
 import defaultslider from '../../json/jatuhtempo_slider.json';
 import { setMessage } from '../../actions/message';
 import PropTypes from 'prop-types';
@@ -16,22 +16,11 @@ import { connect } from 'react-redux';
 import { AlertNotifaction, Loading } from '../../components';
 
 const options = [
-    { title: 'Sebaran Regional', type: 'bar', key: 'regional' },
-    // { title: 'Jatuh Tempo', type: 'pie', key: 'regional' },
-    // { title: 'Inproses', type: 'pie', key: 'regional' },
-    // { title: 'Over SLA', type: 'pie', key: 'regional' }
+    { title: 'Total Transaksi', type: 'bar', filter: 'totaltrx' },
+    { title: 'Ontime SWP', type: 'bar', filter: 'ontime' },
+    { title: 'Jatuh Tempo', type: 'bar', filter: 'jatuhtempo' },
+    { title: 'Menginap', type: 'bar', filter: 'menginap' },
 ]
-
-const getStateMenginap = (created, currdate, status) => {
-    let res = false;
-
-    if(created === currdate){
-        if(status !== 'R7' || status !== 'DELIVERED'){
-            res = true;
-        }
-    }
-    return res;
-}
 
 const JatuhTempo = ({ navigation, route, setMessage, messagenotification, region }) => {
     const { params } = route;
@@ -42,64 +31,33 @@ const JatuhTempo = ({ navigation, route, setMessage, messagenotification, region
         data: []
     });
 
-    const [data, setdata] = useState([]);
     const [slider, setslider] = useState(defaultslider);
     const [office, setoffice] = useState({
         regional: '00',
-        kprk: '00',
-        status: '00'
+        kprk: '00'
     })
     const [daterange, setdaterange] = useState({
         startdate: '',
         enddate: ''
     })
+    const [data, setdata] = useState([]);
 
     useEffect(() => {
-        const defaultdate = convertToDateFromString();
-        const values = defaultdate.split('|');
+        // const defaultdate = convertToDateFromString();
+        // const values = defaultdate.split('|');
+        let yourDate = new Date();
+        const offset    = yourDate.getTimezoneOffset()
+        yourDate  = new Date(yourDate.getTime() - (offset*60*1000))
+        yourDate  = yourDate.toISOString().split('T')[0];
 
         const payload = {
-            startdate: values[0],
-            enddate: values[1],
+            startdate: yourDate,
+            enddate: yourDate,
             ...office
         }
-        
+
         onSearch(payload);
     }, []);
-
-    useEffect(() => {
-        if(data.length > 0){
-            
-
-            const { onTimeSwp, jatuhTempo, menginap, overSla, total } = data.reduce(({ 
-                onTimeSwp, 
-                jatuhTempo, 
-                menginap,
-                overSla,
-                total
-            }, item) =>
-                ({ 
-                    onTimeSwp: item.updated_at <= item.sla_date && item.status === 'DELIVERED' ? onTimeSwp + 1 : onTimeSwp, 
-                    jatuhTempo: item.currentdate = item.sla_date && item.status !== 'DELIVERED' ? jatuhTempo + 1 : jatuhTempo,
-                    menginap: getStateMenginap(item.created_at, item.currentdate, item.status) ? menginap + 1 : menginap,
-                    overSla: item.currentdate > item.sla_date && item.status !== 'DELIVERED' ? overSla + 1 : overSla,
-                    total: item.connote_code !== null ? total + 1 : total
-                })
-            ,{ onTimeSwp: 0, jatuhTempo: 0, menginap: 0, overSla: 0, total: 0 });
-
-            const slider = [
-                { title: 'left-spacer' },
-                { title: 'Jumlah Transaksi', jumlah: total.toString(), satuan: 'Resi', key: 'all'},
-                { title: 'On time SWP', jumlah: onTimeSwp.toString(), satuan: 'Resi', key: 'ontime'},
-                { title: 'Jatuh Tempo', jumlah: jatuhTempo.toString(), satuan: 'Resi', key: 'jatuhtempo'},
-                { title: 'Over SLA', jumlah: overSla.toString(), satuan: 'Resi', key: 'oversla'},
-                { title: 'Kiriman Menginap', jumlah: menginap.toString(), satuan: 'Resi', key: 'menginap'},
-                { title: 'righ-spacer'}
-            ]
-
-            setslider(slider);
-        }
-    }, [data]);
 
     const renderDot = ({ item  }) => {
         return(
@@ -120,24 +78,51 @@ const JatuhTempo = ({ navigation, route, setMessage, messagenotification, region
         />
     )
 
-    const handlePressDetail = () => {
-        navigation.navigate('TableProduksiKiriman', {
-            data,
-            slider: slider.filter(row => row.jumlah)
-        })
-    }
+    // const handlePressDetail = () => {
+    //     navigation.navigate('TableProduksiKiriman', {
+    //         data,
+    //         slider: slider.filter(row => row.jumlah)
+    //     })
+    // }
 
     const onSearch = async (payload) => {
         if(!loading) { setloading(true) }
-
         try {
-            const get = await service.produksikiriman.get(payload);
-            setdata(get.data);
+            const get = await service.produksikiriman.jatuhtempo(payload);
+            //setdata(get.data);
+
+            const { onTimeSwp, jatuhTempo, menginap, overSla, total } = get.data.reduce(({ 
+                onTimeSwp, 
+                jatuhTempo, 
+                menginap,
+                overSla,
+                total
+            }, item) =>
+                ({ 
+                    onTimeSwp: item.types === 'ontime' ? onTimeSwp + Number(item.jumlah) : onTimeSwp, 
+                    jatuhTempo: item.types === 'jatuhtempo' ? jatuhTempo + Number(item.jumlah) : jatuhTempo,
+                    menginap: item.types === 'menginap' ? menginap + Number(item.jumlah) : menginap,
+                    overSla: item.types === 'oversla' ? overSla + Number(item.jumlah) : overSla,
+                    total: item.types === 'totaltrx' ? total + Number(item.jumlah) : total, 
+                })
+            ,{ onTimeSwp: 0, jatuhTempo: 0, menginap: 0, overSla: 0, total: 0 });
+
+            const slider = [
+                { title: 'left-spacer' },
+                { title: 'Jumlah Transaksi', jumlah: total.toString(), satuan: 'Resi', key: 'all'},
+                { title: 'On time SWP', jumlah: onTimeSwp.toString(), satuan: 'Resi', key: 'ontime'},
+                { title: 'Jatuh Tempo', jumlah: jatuhTempo.toString(), satuan: 'Resi', key: 'jatuhtempo'},
+                { title: 'Over SLA', jumlah: overSla.toString(), satuan: 'Resi', key: 'oversla'},
+                { title: 'Kiriman Menginap', jumlah: menginap.toString(), satuan: 'Resi', key: 'menginap'},
+                { title: 'righ-spacer'}
+            ]
+
+            setslider(slider);
+            setdata(get.data); //default data
 
             //passing data to render pie/bar data not from state
-            chooseGrafik(0, get.data); 
+            chooseGrafik(0, get.data, { regional: payload.regional, kprk: payload.kprk }); 
         } catch (error) {
-            setdata([]);
             chooseGrafik(0, []); 
             setslider(defaultslider);
             if(error.message){
@@ -159,28 +144,25 @@ const JatuhTempo = ({ navigation, route, setMessage, messagenotification, region
 
     const handleChangeOffice = (office) => {
         setoffice(prev => ({ ...prev, ...office })); //kprk and regional
-        onSearch({ ...office, status: '00', ...daterange });
+        onSearch({ ...office, ...daterange });
     }
 
-    const chooseGrafik = (index, defaultdata=data) => {
-        let option  = options[index].key;
+    const chooseGrafik = (index, defaultdata=data, defaultoffice=office) => {
+        let option = 'region';
         const type  = options[index].type;
+        const filter = options[index].filter;
 
-        if(option === 'AGENPOS'){
-            option = 'nopen';
-            var filtered = defaultdata.filter(k => k[options[index].filterkey] === options[index].key)
-        }else{
-            var filtered = defaultdata.filter(k => k[option] != null);
-        }
+        if(defaultoffice.regional !== '00' && defaultoffice.kprk === '00') option = 'nopend';
+        if(defaultoffice.kprk !== '00') option = 'service';
 
-        const groupedObject = filtered.reduce((obj, keys) => {
+        const groupedObject = defaultdata.filter(row => row.types === filter).reduce((obj, keys) => {
             const count = obj[keys[option]] || 0
-            return { ...obj, [keys[option]]: count + 1 }
+            return { ...obj, [keys[option]]: count + Number(keys.jumlah) }
         }, {});
-
+    
         let arr = Object.entries(groupedObject).map((k, index) => ( { 
             key: index,
-            name: `REG ${k[0]}`,
+            name: `${k[0]}`,
             jumlah: k[1],
             svg: {
                 fill: type === 'pie' ? generateColor() : 'rgba(134, 65, 244, 0.8)'
@@ -224,7 +206,7 @@ const JatuhTempo = ({ navigation, route, setMessage, messagenotification, region
                                 onChoose={handleChangeOffice}
                                 offices={region}
                             />
-                            <SliderAnimation listitem={slider} onPressDetail={handlePressDetail}/>
+                            <SliderAnimation listitem={slider} />
                         </View>
                         <View style={styles.card}>
                             <DropDown 

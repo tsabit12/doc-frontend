@@ -46,7 +46,7 @@ const DropDown = ({ options, indexvalue, onChoose }) => {
         <React.Fragment>
             <TouchableOpacity style={styles.buttonoptions} activeOpacity={0.7} onPress={handleOpen}>
                 <Text style={styles.textoptions}>
-                    {options[indexvalue].title}
+                    {options[indexvalue].title} { options[indexvalue].subtitle }
                 </Text>
                 <AngleDown size='small' />
             </TouchableOpacity>

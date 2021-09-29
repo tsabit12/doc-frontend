@@ -68,11 +68,12 @@ export const convertToDateFromString = (last={ title: 'last' }, number={ title: 
 
     const currdate  = new Date();
     let currday     =  ("0" + (currdate.getDate())).slice(-2);
+    let yesterday   = ("0" + (currdate.getDate() - 1)).slice(-2);
     let currmonth   = ("0" + (currdate.getMonth() + 1)).slice(-2);
     var curryear    = currdate.getFullYear();
 
     if(last.title.toLowerCase() === 'last'){
-        return `${defaultyear}-${defaultmonth}-${defaultday}|${curryear}-${currmonth}-${currday}`;
+        return `${defaultyear}-${defaultmonth}-${defaultday}|${curryear}-${currmonth}-${yesterday}`;
     }else{
         return `${curryear}-${currmonth}-${currday}|${defaultyear}-${defaultmonth}-${defaultday}`;
     }

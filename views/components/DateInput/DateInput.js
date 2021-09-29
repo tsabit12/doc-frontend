@@ -25,7 +25,7 @@ const DateInput = ({ onDateChoosed, children }) => {
         enddate: ''
     })
     const [daterange, setdaterange] = useState({
-        label: `${lastoptions[0].title} ${numberoptions[0].title} ${periodoptions[0].title}`,
+        label: `TODAY`,
         value: ''
     })
 
@@ -112,6 +112,20 @@ const DateInput = ({ onDateChoosed, children }) => {
         }).start() 
     }
 
+    const presToday = () => {
+        let yourDate = new Date();
+        const offset    = yourDate.getTimezoneOffset()
+        yourDate  = new Date(yourDate.getTime() - (offset*60*1000))
+        yourDate  = yourDate.toISOString().split('T')[0];
+
+        setdaterange({
+            label: 'TODAY',
+            value: `${yourDate}|${yourDate}`
+        })
+
+        setopen(false);
+    }
+
     return(
         <View style={styles.root}>
             <View style={styles.inputroot}>
@@ -186,7 +200,7 @@ const DateInput = ({ onDateChoosed, children }) => {
                             <Text style={styles.linktitle}>Commonly used</Text>
                             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <View style={styles.linkcontainer}>
-                                    <TouchableOpacity style={styles.link}>
+                                    <TouchableOpacity style={styles.link} onPress={presToday}>
                                         <Text style={styles.linktext}>Today</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.link}>

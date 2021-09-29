@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { rupiahNumber } from '../../../utils';
@@ -11,7 +11,7 @@ const SPACING = 10;
 const ITEM_SIZE = width * 0.72;
 const SPACE_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
-const SliderAnimation = ({ listitem, onPressDetail }) => {
+const SliderAnimation = ({ listitem }) => {
     const scrollY = useRef(new Animated.Value(0)).current;
     const flatListRef = useRef(null);
 
@@ -57,12 +57,12 @@ const SliderAnimation = ({ listitem, onPressDetail }) => {
 
     return(
         <React.Fragment>
-            <View style={styles.link}>
+            {/* <View style={styles.link}>
                 <TouchableOpacity activeOpacity={0.8} onPress={onPressDetail}>
                     <Text style={styles.viewdetails}>View Details</Text>
                 </TouchableOpacity>
-            </View>
-            <View style={{marginLeft: -15, marginRight: -15, marginTop: -5}}>
+            </View> */}
+            <View style={{marginLeft: -15, marginRight: -15, marginTop: 7 }}>
                 <Animated.FlatList 
                     onScroll={Animated.event(
                         [{ nativeEvent: {contentOffset: {x: scrollY} } }],
@@ -133,8 +133,7 @@ const styles = StyleSheet.create({
 })
 
 SliderAnimation.propTypes = {
-    listitem: PropTypes.array.isRequired,
-    onPressDetail: PropTypes.func.isRequired,
+    listitem: PropTypes.array.isRequired
 }
 
 export default SliderAnimation;

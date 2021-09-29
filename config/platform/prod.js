@@ -9,15 +9,15 @@ export default function request(method, service, data = {}, type=undefined){
         "Content-Type": "application/json",
         "Authorization": "Basic ZG9jOmQwYzNudEVyIzE=" 
     }
+    let defaulturl = `${uri}${service}`;
 
-    if(type === 'upload'){
-        headerlist["Content-Type"] = "multipart/form-data";
-    }
-    
+    if(type === 'upload') headerlist["Content-Type"] = "multipart/form-data";
+    if(method === 'GET') defaulturl = `${defaulturl}?${new URLSearchParams(data).toString()}`;
+
     return {
-        url: `${uri}${service}`,
+        url: defaulturl,
         method,
         headers: headerlist,
-        data
+        data: method === 'GET' ? undefined : data
     }
 }
