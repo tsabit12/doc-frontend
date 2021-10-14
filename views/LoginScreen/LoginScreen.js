@@ -59,6 +59,7 @@ const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => 
                 await login(field);
                 //console.log(login);
             } catch (error) {
+                console.log(error.request);
                 setloading(false);
                 if(error.global) {
                     setMessage({ open: true, message: error.global });

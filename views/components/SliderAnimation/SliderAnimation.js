@@ -39,17 +39,19 @@ const SliderAnimation = ({ listitem }) => {
         return(
             <View style={{width: ITEM_SIZE, marginTop: 15}}>
                 <Animated.View style={{ transform: [{ translateY }]  }}>
-                    <LinearGradient 
-                        style={styles.sliderlist}
-                        colors={['#FF7713', '#D81919']}
-                        end={{ x: 1.6, y: 0.3 }}
-                    >
-                        <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.subtitle} numberOfLines={2}>
-                            <Text style={styles.number}>{ rupiahNumber(item.jumlah) } </Text>
-                            {item.satuan}
-                        </Text>
-                    </LinearGradient>
+                    <View style={styles.shadow}>
+                        <LinearGradient 
+                            style={styles.sliderlist}
+                            colors={['#FF7713', '#D81919']}
+                            end={{ x: 1.6, y: 0.3 }}
+                        >
+                            <Text style={styles.title}>{item.title}</Text>
+                            <Text style={styles.subtitle} numberOfLines={2}>
+                                <Text style={styles.number}>{ rupiahNumber(item.jumlah) } </Text>
+                                {item.satuan}
+                            </Text>
+                        </LinearGradient>
+                    </View>
                 </Animated.View>
             </View>
         )
@@ -57,11 +59,6 @@ const SliderAnimation = ({ listitem }) => {
 
     return(
         <React.Fragment>
-            {/* <View style={styles.link}>
-                <TouchableOpacity activeOpacity={0.8} onPress={onPressDetail}>
-                    <Text style={styles.viewdetails}>View Details</Text>
-                </TouchableOpacity>
-            </View> */}
             <View style={{marginLeft: -15, marginRight: -15, marginTop: 7 }}>
                 <Animated.FlatList 
                     onScroll={Animated.event(
@@ -91,19 +88,21 @@ const SliderAnimation = ({ listitem }) => {
 const styles = StyleSheet.create({
     sliderlist: {
         justifyContent: 'center',
-        //alignItems: 'center',
         borderRadius: 10,
         padding: SPACING * 2,
-        marginHorizontal: SPACING,
-        elevation: 3,
-        shadowColor: 'green',
-        shadowOffset: { width: 20, height: 10 },
-        shadowOpacity: 0.5,
-        shadowRadius: 4,
-        borderWidth: Platform.OS === 'ios' ? 1 : 0,
-        borderColor: 'red',
-        height: HP('15%')
+        height: HP('15%'),
+        elevation: 3
     },
+    shadow: {
+        marginHorizontal: SPACING,
+        shadowColor: '#000',
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        shadowOffset: {
+            width: 1,
+            height: 2
+        }
+    },  
     link: {
         flexDirection: 'row', 
         justifyContent: 'flex-end', 
@@ -123,11 +122,11 @@ const styles = StyleSheet.create({
     subtitle: {
         fontFamily: 'Poppins-Regular',
         color: '#FFF',
-        fontSize: RFValue(15)
+        fontSize: RFValue(14)
     },
     number: {
         fontSize: RFValue(20),
-        lineHeight: 26,
+        //lineHeight: 26,
         fontFamily: 'Poppins-Bold',
     }
 })

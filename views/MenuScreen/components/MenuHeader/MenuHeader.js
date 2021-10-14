@@ -29,7 +29,7 @@ ImageUri.propTypes = {
     url: PropTypes.string.isRequired
 }
 
-const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch, onPressUpdateProfile, onClickLogout }) => {
+const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch, onPressUpdateProfile }) => {
     const [search, setsearch] = useState('');
 
     useEffect(() => {
@@ -42,11 +42,6 @@ const MenuHeader = ({ imageUri, fullname, onChangeImage, onSearch, onPressUpdate
 
     return(
         <View style={styles.content}>
-            <View style={{width: '100%', alignItems: 'flex-end'}}>
-                <TouchableOpacity style={{paddingVertical: 10}} activeOpacity={0.7} onPress={onClickLogout}>
-                    <Text style={styles.textlogout}>Logout</Text>
-                </TouchableOpacity>
-            </View>
             <View>
                 { imageUri === null ? <ImageSource /> : <ImageUri url={imageUri} /> }
                 <TouchableOpacity activeOpacity={0.7} style={styles.updateicon} onPress={onChangeImage}>
@@ -133,7 +128,14 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         elevation: 4,
         marginTop: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.5,
+        shadowRadius: 4,
+        shadowOffset: {
+            width: 2,
+            height: 3
+        }
     },
     textlogout: {
         fontFamily: 'Poppins-Regular',
@@ -152,8 +154,7 @@ MenuHeader.propTypes = {
     fullname: PropTypes.string.isRequired,
     onChangeImage: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
-    onPressUpdateProfile: PropTypes.func.isRequired,
-    onClickLogout: PropTypes.func.isRequired,
+    onPressUpdateProfile: PropTypes.func.isRequired
 }
 
 export default MenuHeader;

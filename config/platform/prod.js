@@ -1,4 +1,4 @@
-const uri = `https://rangerkom.posindonesia.co.id/doc`;
+const uri = `http://13.251.133.165:10880`;
 
 export const url = `${uri}/assets/profile`;
 

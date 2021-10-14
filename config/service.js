@@ -32,6 +32,19 @@ export default {
                 }else{
                     return Promise.reject(message);
                 }
+            }),
+        menu: (params) => axios.request(useService('GET', '/menu', params))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data);
+                }else{
+                    const firstMessageKey = Object.keys(message)[0];
+                    //return as object
+                    return Promise.reject({
+                        message: message[firstMessageKey]
+                    });
+                }
             })
     },
     profile: {

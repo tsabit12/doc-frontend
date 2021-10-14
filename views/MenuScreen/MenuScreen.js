@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Alert, AsyncStorage, BackHandler, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { connect } from 'react-redux';
-import { Book as BookIcon } from '../../icons';
 import { GradientLayout } from '../components';
 import { HP, WP } from '../config/layout';
 import PropTypes from 'prop-types';
@@ -14,7 +13,7 @@ import { setImage, logout } from '../../actions/sessions';
 import { setMessage } from '../../actions/message';
 import { MenuHeader } from './components';
 import { StackActions, useIsFocused } from '@react-navigation/native';
-import { searchMenu } from '../../actions/menus';
+import { searchMenu, getmenu } from '../../actions/menus';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync } from '../../utils';
 
@@ -34,21 +33,18 @@ const MenuScreen = ({
     messagenotification, 
     logout,
     searchMenu,
-    menus
+    menus,
+    getmenu
 }) => {
     const [loading, setloading] = useState(false);
+    const [menufetched, setmenufetched] = useState(false);
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        registerForPushNotificationsAsync().then(async token => {
-            // console.log({ token });
-            const payload = {
-                userid: sessions.userid,
-                token
-            }
-
+        (async () => {
             try {
-                await service.profile.addToken(payload);
+                await getmenu({ roleid: sessions.roleid });
+                //console.log(menusvalues);
             } catch (error) {
                 if(error.message){
                     setMessage({ open: true, message: error.message });
@@ -56,15 +52,39 @@ const MenuScreen = ({
                     setMessage({ open: true, message: 'Unknown error' });
                 }
             }
-        })
-        .catch(error => {
-            if(error.msg){
-                setMessage({ open: true, message: error.msg });
-            }else{
-                setMessage({ open: true, message: 'Cannote send notification' });
-            }
-        })
-    }, [])
+            setmenufetched(true);
+        })();
+    }, []);
+
+    useEffect(() => {
+        if(menufetched){
+            registerForPushNotificationsAsync().then(async token => {
+                const payload = {
+                    userid: sessions.userid,
+                    token
+                }
+    
+                try {
+                    await service.profile.addToken(payload);
+                } catch (error) {
+                    if(error.message){
+                        setMessage({ open: true, message: error.message });
+                    }else{
+                        setMessage({ open: true, message: 'Unknown error' });
+                    }
+                }
+    
+                //Notifications.getNotificationCategoriesAsync().then(res => console.log({ res}))
+            })
+            .catch(error => {
+                if(error.msg){
+                    setMessage({ open: true, message: error.msg });
+                }else{
+                    setMessage({ open: true, message: 'Cannote send notification' });
+                }
+            })   
+        }
+    }, [menufetched])
 
     useEffect(() => {
         const backAction = () => {
@@ -95,16 +115,24 @@ const MenuScreen = ({
         // logout();
     }
 
+    const handlePressMenu = (item) => {
+        if(item.id === '7'){
+            handleLogout();
+        }else{
+            navigation.navigate(item.route, { 
+                title: item.title,
+                subtitle: item.subtitle
+            })
+        }
+    }
+
     const renderItem = ({ item }) => (
         <TouchableOpacity 
             style={styles.listcontent} 
             activeOpacity={0.8}
-            onPress={() => navigation.navigate(item.route, { 
-                title: item.title,
-                subtitle: item.subtitle
-            })}
+            onPress={() => handlePressMenu(item)}
         >
-            <BookIcon />
+            { item.icon }
             <View style={styles.list}>
                 <Text style={styles.title}>{item.title}</Text>
                 { item.subtitle ? <Text style={styles.subtitle}>{item.subtitle}</Text> : <React.Fragment /> }
@@ -146,8 +174,7 @@ const MenuScreen = ({
         setloading(true);
 
         try {
-            const upload = await service.profile.uploadimage(formData);
-            const { image } = upload;
+            const { image } = await service.profile.uploadimage(formData);
             setImage(image);
         } catch (error) {
             if(error.global){
@@ -268,6 +295,7 @@ MenuScreen.propTypes = {
     messagenotification: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
     searchMenu: PropTypes.func.isRequired,
+    getmenu: PropTypes.func.isRequired,
 }
 
 const filterMenu = (menus) => {
@@ -286,4 +314,10 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, { setImage, setMessage, logout, searchMenu })(MenuScreen);
+export default connect(mapStateToProps, { 
+    setImage, 
+    setMessage, 
+    logout, 
+    searchMenu,
+    getmenu
+})(MenuScreen);

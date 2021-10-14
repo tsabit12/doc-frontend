@@ -9,10 +9,10 @@ import PropTypes from 'prop-types';
 import { convertToDateFromString } from '../../../utils';
 
 const lastoptions   = [{ title: "Last" }, { title: "Next" }];
-const numberoptions = [{title: '1'}, {title: '5'}, {title: '15'}, {title: '30'}, {title: '50'}, {title: '100'}];
+const numberoptions = [{title: '1'}, {title: '2'}, {title: '3'}, {title: '4'}, {title: '5'}, {title: '6'}];
 const periodoptions = [{title: 'Day'}, {title: 'Week'}, {title: 'Month'}, {title: 'Year'}];
 
-const COLLAPSE_HEIGHT = HP('51%');
+const COLLAPSE_HEIGHT = HP('45%');
 
 const DateInput = ({ onDateChoosed, children }) => {
     const [open, setopen] = useState(false);
@@ -28,6 +28,7 @@ const DateInput = ({ onDateChoosed, children }) => {
         label: `TODAY`,
         value: ''
     })
+    const [number, setnumber] = useState(numberoptions);
 
     useEffect(() => {
         LogBox.ignoreLogs([
@@ -35,6 +36,15 @@ const DateInput = ({ onDateChoosed, children }) => {
             'DatePickerIOS has been merged with DatePickerAndroid and will be removed in a future release.',
             'componentWillReceiveProps has been renamed, and is not recommended for use.'
         ]);
+
+        const numbervalue = [];
+        for (let index = 1; index <= 30; index++) {
+            numbervalue.push({
+                title: index
+            })
+        }
+
+        setnumber(numbervalue);
     }, []);
 
     useEffect(() => { 
@@ -128,25 +138,16 @@ const DateInput = ({ onDateChoosed, children }) => {
 
     return(
         <View style={styles.root}>
-            <View style={styles.inputroot}>
-                <TouchableOpacity 
-                    style={styles.button} 
-                    activeOpacity={0.8} 
-                    onPress={openCollapse}
-                >
+            <TouchableOpacity style={styles.inputroot} onPress={openCollapse} activeOpacity={1}>
+                <View style={styles.button}>
                     <Calendar />
                     <AngleDown />
-                </TouchableOpacity>
+                </View>
                 <View style={styles.borderright} />
-                <TextInput 
-                    placeholder='Select date'
-                    style={styles.input}
-                    placeholderTextColor='#ADADAD'
-                    editable={false}
-                    selectTextOnFocus={false}
-                    value={daterange.label.toUpperCase()}
-                />
-            </View>
+                <View style={{flex: 1, height: '100%', justifyContent: 'center'}}>
+                    <Text style={styles.input}>{daterange.label.toUpperCase()}</Text>
+                </View>
+            </TouchableOpacity>
             
             { open && <Animated.View style={collapsestyles}>
                 <View style={styles.arrowup} />
@@ -167,7 +168,7 @@ const DateInput = ({ onDateChoosed, children }) => {
                                 statusBarTranslucent={true}
                             />
                             <SelectDropdown
-                                data={numberoptions}
+                                data={number}
                                 onSelect={(selectedItem, index) => handleChangeOptions(index, 'number')}
                                 defaultValueByIndex={field.number}
                                 buttonStyle={styles.optionsbutton}
@@ -203,14 +204,14 @@ const DateInput = ({ onDateChoosed, children }) => {
                                     <TouchableOpacity style={styles.link} onPress={presToday}>
                                         <Text style={styles.linktext}>Today</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.link}>
+                                    {/* <TouchableOpacity style={styles.link}>
                                         <Text style={styles.linktext}>Last 15 Hour</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.link}>
                                         <Text style={styles.linktext}>Last 5 Day</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                 </View>
-                                <View style={styles.linkcontainer}>
+                                {/* <View style={styles.linkcontainer}>
                                     <TouchableOpacity style={styles.link}>
                                         <Text style={styles.linktext}>This week</Text>
                                     </TouchableOpacity>
@@ -220,7 +221,7 @@ const DateInput = ({ onDateChoosed, children }) => {
                                     <TouchableOpacity style={styles.link}>
                                         <Text style={styles.linktext}>Last 1 year</Text>
                                     </TouchableOpacity>
-                                </View>
+                                </View> */}
                             </View>
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -319,8 +320,6 @@ const styles = StyleSheet.create({
         borderColor: '#ADADAD'
     },
     input: {
-        height: '100%',
-        flex: 1,
         color: '#ADADAD',
         fontSize: RFValue(14)
     },

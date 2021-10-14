@@ -82,7 +82,7 @@ export const convertToDateFromString = (last={ title: 'last' }, number={ title: 
 export const registerForPushNotificationsAsync = async () => {
     let token;
 
-    if (Constants.isDevice) {
+    //if (Constants.isDevice) {
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
         if (existingStatus !== 'granted') {
@@ -95,9 +95,9 @@ export const registerForPushNotificationsAsync = async () => {
         }
 
         token = (await Notifications.getExpoPushTokenAsync()).data;
-    } else {
-        return Promise.reject({ msg: 'Must use physical device for Push Notifications'});
-    }
+    // } else {
+    //     return Promise.reject({ msg: 'Must use physical device for Push Notifications'});
+    // }
   
     if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default-doc', {
@@ -107,6 +107,29 @@ export const registerForPushNotificationsAsync = async () => {
             lightColor: '#FF231F7C',
             sound: 'mixkit-bell-notification-933.wav'
         });
+
+        Notifications.setNotificationCategoryAsync("basic", [
+            // { identifier: "Yes", buttonTitle: "Yes 😀" },
+            // { identifier: "No", buttonTitle: "No 😕" },
+            {
+                identifier: 'one',
+                buttonTitle: 'Button One',
+                isDestructive: true,
+                isAuthenticationRequired: false,
+            },
+            {
+                identifier: 'two',
+                buttonTitle: 'Button Two',
+                isDestructive: false,
+                isAuthenticationRequired: true,
+            },
+            {
+                identifier: 'three',
+                buttonTitle: 'Three',
+                textInput: { submitButtonTitle: 'Three', placeholder: 'Type Something' },
+                isAuthenticationRequired: false,
+            },
+        ])
     }
   
     return Promise.resolve(token);
