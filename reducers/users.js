@@ -1,10 +1,8 @@
-import { GET_JUMLAH_USER, GET_USER } from "../types";
+import { GET_JUMLAH_USER, GET_USER, LOAD_MORE_USER } from "../types";
 
 const initialState = {
      total: 0,
-     data: {
-          //`page1`: []
-     }
+     data: []
 }
 
 export default function users(state=initialState, action={}){
@@ -14,11 +12,10 @@ export default function users(state=initialState, action={}){
           case GET_USER:
                return {
                     ...state,
-                    data: {
-                         ...state.data,
-                         [action.page]: action.data
-                    }
+                    data: action.data
                }
+          case LOAD_MORE_USER:
+               return { ...state, data: [ ...state.data, ...action.data ] }
           default:
                return state;
      }

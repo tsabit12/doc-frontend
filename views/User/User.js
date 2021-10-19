@@ -18,7 +18,7 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
      const [progress, setprogress] = useState(0.2);
      const [showprogress, setshowprogress] = useState(true);
      const [paging, setpaging] = useState({
-          limit: 10,
+          limit: 5,
           activePage: 1
      })
 
@@ -39,9 +39,9 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
           setprogress(0.2);
           (async () => {
                try {
-                    await getuser(defaultParams, 1);
+                    await getuser(defaultParams);
                     setprogress(0.5)
-                    await getuser({ ...defaultParams, type: 'data' }, 1); 
+                    await getuser({ ...defaultParams, type: 'data' }); 
                } catch (error) {
                     if(error.message){
                          setMessage({ open: true, message: error.message });
@@ -64,6 +64,8 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
           }
      }, [progress]);
 
+     console.log(data);
+
      const userCard = ({ item }) => {
           return <View style={styles.container}>
                <Image 
@@ -75,20 +77,28 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
                <View style={styles.cardright}>
                     <Text style={styles.fullname}>{item.fullname}</Text>
                     <Text style={styles.email}>{item.email}</Text>
+                    <Text numberOfLines={1} style={{ ...styles.email, fontSize: 11}}>
+                         {item.officeid} - {item.officename}
+                    </Text>
                </View>
           </View>
      }
 
-     const showmore = (page) => {
-          const offset = (page * limit) - limit;
+     const showmore = async (nextPage) => {
+          setpaging(prev => ({ ...prev, activePage: nextPage })); 
+          const offset = (nextPage * limit) - limit;
+
+          setprogress(0.2);
           
+          await getuser({ ...defaultParams, type: 'data', offset }, 'loadmore'); 
+
+          setprogress(1);
      }
 
-     var pagesdata  = data[`page${activePage}`] ? data[`page${activePage}`] : [];
      let count      = Math.ceil(total / limit);
      let loadmoreactive = false;
 
-     if(pagesdata.length > 0 && activePage <= count){
+     if(data.length > 0 && activePage < count){
           loadmoreactive = true;
      }
 
@@ -118,12 +128,16 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
                          borderWidth={0}
                     /> }
 
-                    <TouchableOpacity style={styles.floatbutton} activeOpacity={0.8}>
+                    
+                    <TouchableOpacity 
+                         style={styles.floatbutton} 
+                         activeOpacity={0.8}
+                    >
                          <AddIcon />
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
           
                     <FlatList 
-                         data={pagesdata}
+                         data={data}
                          keyExtractor={(_, index) => index.toString()}
                          renderItem={userCard}
                          contentContainerStyle={{marginTop: 10}}
@@ -152,7 +166,7 @@ const styles = StyleSheet.create({
           marginHorizontal: 15,
           marginVertical: 10,
           backgroundColor: '#FFF',
-          height: heightPercentageToDP('10%'),
+          height: heightPercentageToDP('12%'),
           borderRadius: 7,
           padding: 10,
           flexDirection: 'row',
@@ -174,8 +188,8 @@ const styles = StyleSheet.create({
      cardright:{
           flex: 1,
           marginLeft: 10,  
-          height: '60%', 
-          justifyContent:'space-around'
+          justifyContent:'space-around',
+          height: '85%'
      },
      fullname: {
           fontFamily: 'Poppins-Bold'
@@ -210,7 +224,8 @@ const styles = StyleSheet.create({
           shadowOffset: {
                width: 0,
                height: 0
-          }
+          },
+          elevation: 5
      }
 })
 
