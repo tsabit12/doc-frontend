@@ -116,7 +116,7 @@ const MenuScreen = ({
     }
 
     const handlePressMenu = (item) => {
-        if(item.id === '7'){
+        if(item.id === '00'){
             handleLogout();
         }else{
             navigation.navigate(item.route, { 
@@ -218,7 +218,7 @@ const MenuScreen = ({
                 <FlatList
                     data={menus}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={(item, index) => index.toString()}
                     contentContainerStyle={{flexGrow: 1}}
                     ListHeaderComponent={ 
                         <MenuHeader 
@@ -227,7 +227,7 @@ const MenuScreen = ({
                             onChangeImage={handleChooseImage}
                             onSearch={searchMenu}
                             onPressUpdateProfile={() => navigation.navigate('Profile')}
-                            onClickLogout={handleLogout}
+                            //onClickLogout={handleLogout}
                         /> 
                     }
                     showsVerticalScrollIndicator={false}

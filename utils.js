@@ -109,24 +109,10 @@ export const registerForPushNotificationsAsync = async () => {
         });
 
         Notifications.setNotificationCategoryAsync("basic", [
-            // { identifier: "Yes", buttonTitle: "Yes 😀" },
-            // { identifier: "No", buttonTitle: "No 😕" },
             {
                 identifier: 'one',
-                buttonTitle: 'Button One',
+                buttonTitle: 'View email',
                 isDestructive: true,
-                isAuthenticationRequired: false,
-            },
-            {
-                identifier: 'two',
-                buttonTitle: 'Button Two',
-                isDestructive: false,
-                isAuthenticationRequired: true,
-            },
-            {
-                identifier: 'three',
-                buttonTitle: 'Three',
-                textInput: { submitButtonTitle: 'Three', placeholder: 'Type Something' },
                 isAuthenticationRequired: false,
             },
         ])

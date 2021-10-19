@@ -8,7 +8,7 @@ const initialState = {
         // { id: '1', title: 'Produksi Kiriman', subtitle: 'Pengawasan Produksi Kiriman', route: 'ProduksiKiriman', icon: <BookIcon /> },
         // { id: '5', title: 'Pengawasan Kiriman', subtitle: 'Jatuh tempo, Ontime SWP, Over SLA, Menginap', route: 'JatuhTempo', icon: <BookIcon /> },
         // { id: '6', title: 'Kiriman Irregularitas', subtitle: 'Pengendalian kiriman irregularitas', route: 'Irregulaity', icon: <BookIcon /> },
-        { id: '7', title: 'Logout', icon: <LogoutIcon /> }
+        { id: '00', title: 'Logout', icon: <LogoutIcon /> }
     ]
 }
 

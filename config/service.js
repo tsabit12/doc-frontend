@@ -112,5 +112,19 @@ export default {
                     });
                 }
             }),
+    },
+    user: {
+        get: (params) => axios.request(useService('GET', '/users', params))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data);
+                }else{
+                    const firstMessageKey = Object.keys(message)[0];
+                    return Promise.reject({
+                        message: message[firstMessageKey]
+                    });
+                }
+            }),
     }
 }

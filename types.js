@@ -5,3 +5,5 @@ export const LOGGED_OUT = 'LOGGED_OUT';
 export const SEARCH_MENU = 'SEARCH_MENU';
 export const UPDATE_SESSIONS = 'UPDATE_SESSIONS';
 export const GET_MENU = 'GET_MENU';
+export const GET_JUMLAH_USER = "GET_JUMLAH_USER";
+export const GET_USER = 'GET_USER';

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, useNavigation } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { 
     LoginScreen,
@@ -7,7 +7,10 @@ import {
     MenuScreen,
     JatuhTempo,
     UpdatesView,
-    Profile
+    Profile,
+    User,
+    Notification as NotifView,
+    ProduksiKiriman
 } from './views';
 import PropTypes from 'prop-types';
 import { AsyncStorage } from 'react-native';
@@ -28,14 +31,29 @@ const themes = {
 
 const Stack = createStackNavigator();
 
-const UserRoute = () => {
+const UserRoute = ({ notification }) => {
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        if(Object.keys(notification).length > 0){
+            navigation.navigate('Notification', { data: notification });
+        }
+    }, [notification]);
+
     return(
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
             <Stack.Screen name="JatuhTempo" component={JatuhTempo} options={{ ...verticalTransition }} />
+            <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
             <Stack.Screen name="Profile" component={Profile} options={{ ...horizontalTransition }} />
+            <Stack.Screen name="Users" component={User} options={{ ...verticalTransition }} />
+            <Stack.Screen name="Notification" component={NotifView} options={{ ...verticalTransition }} />
         </Stack.Navigator>
     )
+}
+
+UserRoute.propTypes = {
+    notification: PropTypes.object.isRequired,
 }
 
 const GuestRoute = () => {
@@ -54,7 +72,7 @@ const GuestRoute = () => {
     )
 }
 
-const AppStack = ({ sessions, updateAvailable, setLoggedIn }) => {
+const AppStack = ({ sessions, updateAvailable, setLoggedIn, notification }) => {
     const [mount, setmount] = useState(false);
 
     useEffect(() => {
@@ -78,7 +96,7 @@ const AppStack = ({ sessions, updateAvailable, setLoggedIn }) => {
         }else{
             return(
                 <NavigationContainer theme={themes}>
-                    { Object.keys(sessions).length > 0 ? <UserRoute /> : <GuestRoute /> }
+                    { Object.keys(sessions).length > 0 ? <UserRoute notification={notification} /> : <GuestRoute /> }
                 </NavigationContainer>
             )
         }
@@ -91,6 +109,7 @@ AppStack.propTypes = {
     sessions: PropTypes.object.isRequired,
     updateAvailable: PropTypes.bool.isRequired,
     setLoggedIn: PropTypes.func.isRequired,
+    notification: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state){

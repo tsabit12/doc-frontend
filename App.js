@@ -10,6 +10,7 @@ import rootReducers from './rootReducers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Updates from 'expo-updates';
 import { Loading } from './components';
+import * as Notifications from 'expo-notifications';
 
 const store = createStore(
   rootReducers,
@@ -19,12 +20,12 @@ const store = createStore(
 export default function App() {
   const [updateAvailable, setupdateAvailable] = useState(false);
   const [loading, setloading] = useState(true);
+  const [mount, setmount] = useState(false);
+  const [notification, setnotification] = useState({});
 
   let [fontsLoaded] = useFonts({
-    // 'Saira-Condensed': require('./assets/fonts/SairaCondensed-Regular.ttf'),
     'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
-    'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
-    //'Arial-Regular': require('./assets/fonts/arialn.ttf')
+    'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf')
   });
 
   useEffect(() => {
@@ -34,16 +35,32 @@ export default function App() {
           const update = await Updates.checkForUpdateAsync();
           if (update.isAvailable) {
             setupdateAvailable(true);
+          }else{
+            setmount(true);
           }
         } catch (error) {
-          
+          setmount(true);
         }
-
         
         setloading(false);
       })();
     }
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    if(mount){
+      const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+        if(response.actionIdentifier){
+            (async () => {
+              await Notifications.dismissAllNotificationsAsync();
+              setnotification(response);
+            })();
+        }
+      });
+    
+      return () => subscription.remove();
+    }
+  }, [mount]);
 
   if(!fontsLoaded){
     return <AppLoading />
@@ -53,7 +70,10 @@ export default function App() {
         <SafeAreaProvider>
           <Loading open={loading} text='Checking for updates..' />
           <StatusBar style="light" />
-          <AppStack updateAvailable={updateAvailable} />
+          <AppStack 
+            updateAvailable={updateAvailable} 
+            notification={notification}
+          />
         </SafeAreaProvider>
       </Provider>
     );

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Digital Operation Control",
     "slug": "DOC",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -34,12 +34,18 @@
         "WRITE_EXTERNAL_STORAGE"
       ]
     },
+    "notification": {
+      "icon": "./assets/images/notificationnew.png",
+      "color": "#ee8172",
+      "iosDisplayInForeground": true,
+      "androidMode": "default"
+    },
     "plugins": [
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/notification.png",
-          "color": "#ffffff",
+          "icon": "./assets/images/notificationnew.png",
+          "color": "#000000",
           "sounds": ["./assets/sounds/mixkit-bell-notification-933.wav"],
           "mode": "production"
         }

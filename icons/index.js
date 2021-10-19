@@ -16,3 +16,4 @@ export { default as Plus } from './Plus';
 export { default as Pencil } from './Pencil';
 export { default as LogoutIcon } from './Logout';
 export { default as People } from './People';
+export { default as AddIcon } from './AddIcon';
