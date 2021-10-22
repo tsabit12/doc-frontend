@@ -8,3 +8,4 @@ export const GET_MENU = 'GET_MENU';
 export const GET_JUMLAH_USER = "GET_JUMLAH_USER";
 export const GET_USER = 'GET_USER';
 export const LOAD_MORE_USER = 'LOAD_MORE_USER';
+export const ADD_USER = 'ADD_USER';

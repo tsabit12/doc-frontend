@@ -17,3 +17,5 @@ export { default as Pencil } from './Pencil';
 export { default as LogoutIcon } from './Logout';
 export { default as People } from './People';
 export { default as AddIcon } from './AddIcon';
+export { default as Person } from './Person';
+export { default as EmailIcon } from './Email';

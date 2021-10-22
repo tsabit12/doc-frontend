@@ -5,14 +5,25 @@ import { GradientLayout, HeaderLayout } from '../components';
 import defaultstyles from '../config/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getuser } from '../../actions/users';
+import { getuser, adduser } from '../../actions/users';
 import * as Progress from 'react-native-progress';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 import { setMessage } from '../../actions/message';
 import { AlertNotifaction } from '../../components';
 import { asseturl } from '../../config/service';
+import { ModalAdd } from './components';
+import { HP } from '../config/layout';
 
-const User = ({ navigation, getuser, messagenotification, setMessage, sessions, listuser }) => {
+const User = ({ 
+     navigation, 
+     getuser, 
+     messagenotification, 
+     setMessage, 
+     sessions, 
+     listuser, 
+     region,
+     adduser
+}) => {
      const { total, data } = listuser;
 
      const [progress, setprogress] = useState(0.2);
@@ -21,6 +32,7 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
           limit: 5,
           activePage: 1
      })
+     const [open, setopen] = useState(false);
 
      const { activePage, limit } = paging;
 
@@ -63,8 +75,6 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
                setshowprogress(true);
           }
      }, [progress]);
-
-     console.log(data);
 
      const userCard = ({ item }) => {
           return <View style={styles.container}>
@@ -120,6 +130,14 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
                     </TouchableOpacity> } 
                />
 
+               <ModalAdd 
+                    open={open} 
+                    onClose={() => setopen(false)} 
+                    regions={region} 
+                    add={adduser}
+                    userid={sessions.userid}
+               />
+
                <View style={styles.root}>
                     { showprogress && <Progress.Bar 
                          progress={progress} 
@@ -132,6 +150,7 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
                     <TouchableOpacity 
                          style={styles.floatbutton} 
                          activeOpacity={0.8}
+                         onPress={() => setopen(true)}
                     >
                          <AddIcon />
                     </TouchableOpacity> 
@@ -149,6 +168,7 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
                                              <Text style={{color: '#084CB1', textAlign: 'center'}}>Load more</Text>
                                         </TouchableOpacity>
                                    </View> }
+                                   <View style={{height: HP('3%') }} />
                               </React.Fragment>
                          }}
                     />
@@ -160,7 +180,7 @@ const User = ({ navigation, getuser, messagenotification, setMessage, sessions, 
 const styles = StyleSheet.create({
      root: {
           backgroundColor: '#FFF',
-          flex: 1,
+          flex: 1
      },
      container: {
           marginHorizontal: 15,
@@ -235,14 +255,17 @@ User.propTypes = {
      setMessage: PropTypes.func.isRequired,
      sessions: PropTypes.object.isRequired,
      listuser: PropTypes.object.isRequired,
+     region: PropTypes.array.isRequired,
+     adduser: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state){
      return{
           messagenotification: state.message,
           sessions: state.sessions,
-          listuser: state.users
+          listuser: state.users,
+          region: state.region
      }
 }
 
-export default connect(mapStateToProps, { getuser, setMessage })(User);
+export default connect(mapStateToProps, { getuser, setMessage, adduser })(User);

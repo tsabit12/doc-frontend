@@ -126,5 +126,17 @@ export default {
                     });
                 }
             }),
+        add: (payload) => axios.request(useService('POST', '/users', payload))
+            .then(res => {
+                const { status, message } = res.data;
+                if(status){
+                    return Promise.resolve(res.data);
+                }else{
+                    const firstMessageKey = Object.keys(message)[0];
+                    return Promise.reject({
+                        message: message[firstMessageKey]
+                    });
+                }
+            })
     }
 }

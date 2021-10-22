@@ -1,4 +1,4 @@
-import { GET_JUMLAH_USER, GET_USER, LOAD_MORE_USER } from "../types";
+import { ADD_USER, GET_JUMLAH_USER, GET_USER, LOAD_MORE_USER } from "../types";
 
 const initialState = {
      total: 0,
@@ -16,6 +16,12 @@ export default function users(state=initialState, action={}){
                }
           case LOAD_MORE_USER:
                return { ...state, data: [ ...state.data, ...action.data ] }
+          case ADD_USER:
+               return { 
+                    ...state,
+                    total: Number(state.total) + 1,
+                    data: [ { ...action.user }, ...state.data ]
+               }
           default:
                return state;
      }
