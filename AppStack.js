@@ -7,10 +7,10 @@ import {
     MenuScreen,
     JatuhTempo,
     UpdatesView,
-    Profile,
     User,
     Notification as NotifView,
-    ProduksiKiriman
+    ProduksiKiriman,
+    DetailSummary
 } from './views';
 import PropTypes from 'prop-types';
 import { AsyncStorage } from 'react-native';
@@ -20,6 +20,8 @@ import {
     horizontal as horizontalTransition 
 } from './views/config/transition';
 import { setLoggedIn } from './actions/sessions';
+import { setMessage } from './actions/message';
+import HomeTab from './HomeTab';
 
 const themes = {
     ...DefaultTheme,
@@ -31,7 +33,7 @@ const themes = {
 
 const Stack = createStackNavigator();
 
-const UserRoute = ({ notification }) => {
+const UserRoute = ({ notification, sessions, message, setMessage }) => {
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -42,18 +44,29 @@ const UserRoute = ({ notification }) => {
 
     return(
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="HomePage">
+                {() => 
+                    <HomeTab 
+                        sessions={sessions} 
+                        message={message}
+                        setMessage={setMessage}
+                    /> }
+            </Stack.Screen>
             <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
             <Stack.Screen name="JatuhTempo" component={JatuhTempo} options={{ ...verticalTransition }} />
             <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
-            <Stack.Screen name="Profile" component={Profile} options={{ ...horizontalTransition }} />
             <Stack.Screen name="Users" component={User} options={{ ...verticalTransition }} />
             <Stack.Screen name="Notification" component={NotifView} options={{ ...verticalTransition }} />
+            <Stack.Screen name="DetailSummary" component={DetailSummary} options={{ ...horizontalTransition }} />
         </Stack.Navigator>
     )
 }
 
 UserRoute.propTypes = {
     notification: PropTypes.object.isRequired,
+    sessions: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
+    setMessage: PropTypes.func.isRequired,
 }
 
 const GuestRoute = () => {
@@ -72,7 +85,7 @@ const GuestRoute = () => {
     )
 }
 
-const AppStack = ({ sessions, updateAvailable, setLoggedIn, notification }) => {
+const AppStack = ({ sessions, updateAvailable, setLoggedIn, notification, message, setMessage }) => {
     const [mount, setmount] = useState(false);
 
     useEffect(() => {
@@ -96,7 +109,13 @@ const AppStack = ({ sessions, updateAvailable, setLoggedIn, notification }) => {
         }else{
             return(
                 <NavigationContainer theme={themes}>
-                    { Object.keys(sessions).length > 0 ? <UserRoute notification={notification} /> : <GuestRoute /> }
+                    { Object.keys(sessions).length > 0 ? 
+                        <UserRoute 
+                            notification={notification} 
+                            sessions={sessions}
+                            message={message}
+                            setMessage={setMessage}
+                        /> : <GuestRoute /> }
                 </NavigationContainer>
             )
         }
@@ -110,12 +129,15 @@ AppStack.propTypes = {
     updateAvailable: PropTypes.bool.isRequired,
     setLoggedIn: PropTypes.func.isRequired,
     notification: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
+    setMessage: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state){
     return{
-        sessions: state.sessions
+        sessions: state.sessions,
+        message: state.message
     }
 }
 
-export default connect(mapStateToProps, { setLoggedIn })(AppStack);
+export default connect(mapStateToProps, { setLoggedIn, setMessage })(AppStack);

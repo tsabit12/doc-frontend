@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native';
+import { Alert, AsyncStorage, FlatList, Image, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
-import { AngleLeft, Pencil } from '../../icons';
-import { GradientLayout, HeaderLayout } from '../components';
-import defaultstyles from '../config/styles';
+import { Pencil } from '../../icons';
+import { GradientLayout } from '../components';
 import PropTypes from 'prop-types';
 import { RFValue } from 'react-native-responsive-fontsize';
 import service, { asseturl } from '../../config/service';
-import { WP } from '../config/layout';
+import { HP, WP } from '../config/layout';
 import { EmailInput, FullnameInput, UsernameInput } from './components';
-import { updateSessions } from '../../actions/sessions';
+import { updateSessions, logout } from '../../actions/sessions';
 import { setMessage } from '../../actions/message';
 import { AlertNotifaction } from '../../components';
 
@@ -26,7 +25,7 @@ const getAllowedUpdate = (key) => {
     }
 }
 
-const Profile = ({ navigation, sessions, updateSessions, setMessage, messagenotification }) => {
+const Profile = ({ sessions, updateSessions, setMessage, messagenotification, logout }) => {
     const [list, setlist] = useState([]);
     const [visible, setvisible] = useState({
         username: false,
@@ -85,14 +84,28 @@ const Profile = ({ navigation, sessions, updateSessions, setMessage, messagenoti
         }
     }
 
+    const handleLogout = () => {
+        Alert.alert('Are you sure you want to logout?', 'After logout.. you may not receive the notifications we send', [
+            {
+              text: 'Cancel',
+              onPress: () => null,
+              style: 'cancel',
+            },
+            { text: 'YES', onPress: () => onLogout() }, 
+        ]);
+    }
+
+    const onLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('sessions');
+            logout();
+        } catch (error) {
+            alert("Logout failed");
+        }
+    }
+
     return(
         <GradientLayout>
-            <HeaderLayout 
-                title={<Text style={styles.title}>Profile</Text>}
-                lefticon={<TouchableOpacity activeOpacity={0.8} onPress={() => navigation.goBack()}>
-                    <AngleLeft />
-                </TouchableOpacity>} 
-            />
             { visible.username && 
                 <UsernameInput 
                     onClose={handleVisible} 
@@ -117,7 +130,6 @@ const Profile = ({ navigation, sessions, updateSessions, setMessage, messagenoti
             <FlatList 
                 data={list}
                 keyExtractor={item => item.title}
-                contentContainerStyle={{flex: 1, marginTop: 10}}
                 renderItem={({ item }) => (
                     <TouchableNativeFeedback
                         onPress={() => handleVisible(item.title)}
@@ -142,6 +154,13 @@ const Profile = ({ navigation, sessions, updateSessions, setMessage, messagenoti
                         />
                     </View>
                 }
+                ListFooterComponent={
+                    <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
+                        <TouchableOpacity style={styles.btnlogout} activeOpacity={0.8} onPress={handleLogout}>
+                            <Text style={{color: '#FFF'}}>Logout</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             />
 
 
@@ -154,14 +173,13 @@ const Profile = ({ navigation, sessions, updateSessions, setMessage, messagenoti
 }
 
 const styles = StyleSheet.create({
-    title: { ...defaultstyles.headertitle, marginTop: 2 },
     list: {
         marginVertical: 5,
-        padding: 10,
         paddingHorizontal: 17,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: HP('8%')
     },
     listtitle: {
         textTransform: 'capitalize',
@@ -175,7 +193,9 @@ const styles = StyleSheet.create({
         fontSize: RFValue(12)
     },
     imagecontainer: {
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 10
     },
     image: {
         width: WP('35%'),
@@ -183,6 +203,15 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         borderRadius: WP('35%') / 2,
         backgroundColor: '#FFF'
+    },
+    btnlogout: {
+        width: WP('50%'),
+        height: HP('6%'),
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 7,
+        borderWidth: 1,
+        borderColor: '#FFF'
     }
 })
 
@@ -190,7 +219,8 @@ Profile.propTypes = {
     sessions: PropTypes.object.isRequired,
     updateSessions: PropTypes.func.isRequired,
     setMessage: PropTypes.func.isRequired,
-    messagenotification: PropTypes.object.isRequired
+    messagenotification: PropTypes.object.isRequired,
+    logout: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state){
@@ -200,4 +230,4 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, { updateSessions, setMessage })(Profile);
+export default connect(mapStateToProps, { updateSessions, setMessage, logout })(Profile);

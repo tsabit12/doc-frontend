@@ -82,22 +82,19 @@ export const convertToDateFromString = (last={ title: 'last' }, number={ title: 
 export const registerForPushNotificationsAsync = async () => {
     let token;
 
-    //if (Constants.isDevice) {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-        }
-       
-        if (finalStatus !== 'granted') {
-          return Promise.reject({ msg: 'Failed to get push token for push notification!'});
-        }
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+    }
+    
+    if (finalStatus !== 'granted') {
+        return Promise.reject({ msg: 'Failed to get push token for push notification!'});
+    }
 
-        token = (await Notifications.getExpoPushTokenAsync()).data;
-    // } else {
-    //     return Promise.reject({ msg: 'Must use physical device for Push Notifications'});
-    // }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    
   
     if (Platform.OS === 'android') {
         Notifications.setNotificationChannelAsync('default-doc', {
@@ -106,6 +103,14 @@ export const registerForPushNotificationsAsync = async () => {
             vibrationPattern: [0, 250, 250, 250],
             lightColor: '#FF231F7C',
             sound: 'mixkit-bell-notification-933.wav'
+        });
+
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+              shouldShowAlert: true,
+              shouldPlaySound: false,
+              shouldSetBadge: false,
+            }),
         });
 
         Notifications.setNotificationCategoryAsync("basic", [

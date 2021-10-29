@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const GradientLayout = ({ children }) => {
@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
     },
     droidSafeArea: {
         flex: 1,
-        //paddingTop: Platform.OS === 'android' ? 25 : Constants.statusBarHeight,
         paddingBottom: -20
     }
 })

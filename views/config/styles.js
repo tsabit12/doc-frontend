@@ -4,7 +4,7 @@ const styles = {
     headertitle: {
         color: '#FFF',
         fontFamily: 'Poppins-Bold',
-        fontSize: RFValue(19)
+        fontSize: RFValue(18)
     },
     headersubtitle: {
         color: '#FFF',
