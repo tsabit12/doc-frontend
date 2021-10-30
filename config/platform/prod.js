@@ -1,6 +1,9 @@
-const uri = `http://13.251.133.165:10880`;
+const portbalancer = '10880';
+const portasset = '10980';
 
-export const url = `${uri}/assets/profile`;
+const uri = `http://13.251.133.165`;
+
+export const url = `${uri}:${portasset}/assets/profile`;
 
 export default function request(method, service, data = {}, type=undefined){
     const headerlist = {
@@ -9,9 +12,13 @@ export default function request(method, service, data = {}, type=undefined){
         "Content-Type": "application/json",
         "Authorization": "Basic ZG9jOmQwYzNudEVyIzE=" 
     }
-    let defaulturl = `${uri}${service}`;
+    let defaulturl = `${uri}:${portbalancer}${service}`;
 
-    if(type === 'upload') headerlist["Content-Type"] = "multipart/form-data";
+    if(type === 'upload') {
+        headerlist["Content-Type"] = "multipart/form-data";
+        defaulturl =`${uri}:${portasset}${service}`;
+    }
+
     if(method === 'GET') defaulturl = `${defaulturl}?${new URLSearchParams(data).toString()}`;
 
     return {

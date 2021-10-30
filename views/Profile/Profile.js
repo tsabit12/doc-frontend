@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, AsyncStorage, FlatList, Image, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
-import { Pencil } from '../../icons';
-import { GradientLayout } from '../components';
+import { CameraIcon, Pencil, Plus } from '../../icons';
 import PropTypes from 'prop-types';
 import { RFValue } from 'react-native-responsive-fontsize';
 import service, { asseturl } from '../../config/service';
 import { HP, WP } from '../config/layout';
 import { EmailInput, FullnameInput, UsernameInput } from './components';
-import { updateSessions, logout } from '../../actions/sessions';
+import { updateSessions, setImage, logout } from '../../actions/sessions';
 import { setMessage } from '../../actions/message';
-import { AlertNotifaction } from '../../components';
+import { Loading } from '../../components';
+import * as ImagePicker from 'expo-image-picker';
 
 const getAllowedUpdate = (key) => {
     switch (key) {
@@ -25,13 +25,14 @@ const getAllowedUpdate = (key) => {
     }
 }
 
-const Profile = ({ sessions, updateSessions, setMessage, messagenotification, logout }) => {
+const Profile = ({ sessions, updateSessions, setMessage, setImage, logout }) => {
     const [list, setlist] = useState([]);
     const [visible, setvisible] = useState({
         username: false,
         fullname: false,
         email: false
     })
+    const [loading, setloading] = useState(false);
 
     useEffect(() => {
         if(Object.keys(sessions).length > 0){
@@ -76,6 +77,7 @@ const Profile = ({ sessions, updateSessions, setMessage, messagenotification, lo
         try {
             await service.profile.update(payload);
         } catch (error) {
+            console.log(error);
             if(error.message){
                 setMessage({ open: true, message: error.message });
             }else{
@@ -104,8 +106,56 @@ const Profile = ({ sessions, updateSessions, setMessage, messagenotification, lo
         }
     }
 
+    const handleChooseImage = async () => {
+        if(Platform.OS !== 'web'){
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+            }else{
+                let result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [WP('25%'), WP('25%')],
+                    quality: 1,
+                });
+              
+                if (!result.cancelled) {
+                    let localUri = result.uri;
+                    let filename = localUri.split('/').pop();
+
+                    // Infer the type of the image
+                    let match = /\.(\w+)$/.exec(filename);
+                    let type = match ? `image/${match[1]}` : `image`;
+                    
+                    let formData = new FormData();
+                    formData.append('photo', { uri: localUri, name: filename, type });
+                    formData.append('userid', sessions.userid);
+                    handleUpload(formData);
+                }
+            }
+        }
+    }
+
+    const handleUpload = async (formData) => {
+        setloading(true);
+
+        try {
+            const { image } = await service.profile.uploadimage(formData);
+            setImage(image);
+        } catch (error) {
+            if(error.global){
+                setMessage({ open: true, message: error.global });
+            }else{
+                setMessage({ open: true, message: 'Unkonwn error'});
+            }
+        }
+
+        setloading(false);
+    }
+
     return(
-        <GradientLayout>
+        <View style={{flex: 1, backgroundColor: '#FA6901'}} edges={['top', 'left', 'right']}>
+            <Loading open={loading} />
             { visible.username && 
                 <UsernameInput 
                     onClose={handleVisible} 
@@ -130,45 +180,45 @@ const Profile = ({ sessions, updateSessions, setMessage, messagenotification, lo
             <FlatList 
                 data={list}
                 keyExtractor={item => item.title}
+                contentContainerStyle={{flexGrow: 1, backgroundColor: '#FFF'}}
                 renderItem={({ item }) => (
                     <TouchableNativeFeedback
                         onPress={() => handleVisible(item.title)}
                         disabled={!item.allowedupdate}
-                        background={TouchableNativeFeedback.Ripple('#E9E9E9', false)}
+                        background={TouchableNativeFeedback.Ripple('#6e6d6d', false)}
                     >
                         <View style={styles.list}>
                             <View>
                                 <Text style={styles.listtitle}>{item.title}</Text>
                                 <Text style={styles.listsubtitle}>{item.value}</Text>
                             </View>
-                            { item.allowedupdate && <Pencil /> }
+                            { item.allowedupdate && <Pencil color='#6e6d6d' /> }
                         </View>
                     </TouchableNativeFeedback>
                 )}
                 ListHeaderComponent={
                     <View style={styles.imagecontainer}>
-                        <Image 
-                            source={{ uri: `${asseturl}/${sessions.image}`}}
-                            style={styles.image}
-                            resizeMode='cover'
-                        />
+                        <View>
+                            <Image 
+                                source={{ uri: `${asseturl}/${sessions.image}`}}
+                                style={styles.image}
+                                resizeMode='cover'
+                            />
+                            <TouchableOpacity style={styles.updateicon} activeOpacity={1} onPress={handleChooseImage}>
+                                <CameraIcon />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 }
                 ListFooterComponent={
                     <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
                         <TouchableOpacity style={styles.btnlogout} activeOpacity={0.8} onPress={handleLogout}>
-                            <Text style={{color: '#FFF'}}>Logout</Text>
+                            <Text style={{color: '#FA6901'}}>Logout</Text>
                         </TouchableOpacity>
                     </View>
                 }
             />
-
-
-            { messagenotification.open && <AlertNotifaction 
-                message={messagenotification.message}
-                onClose={() => setMessage({ open: false, message: ''})}
-            /> }
-        </GradientLayout>
+        </View>
     )
 }
 
@@ -179,39 +229,60 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: HP('8%')
+        height: HP('7%')
     },
     listtitle: {
         textTransform: 'capitalize',
-        color: '#FFF',
+        color: '#000',
         fontSize: RFValue(14),
         fontFamily: 'Poppins-Bold'
     },
     listsubtitle: {
-        color: '#FFF',
+        color: '#6e6d6d',
         fontFamily: 'Poppins-Regular',
         fontSize: RFValue(12)
     },
     imagecontainer: {
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        paddingTop: 10,
+        backgroundColor: '#FA6901',
+        height: HP('32%'),
+        justifyContent: 'center'
     },
     image: {
-        width: WP('35%'),
-        height: WP('35%'),
+        width: WP('45%'),
+        height: WP('45%'),
         overflow: 'hidden',
-        borderRadius: WP('35%') / 2,
+        borderRadius: WP('45%') / 2,
         backgroundColor: '#FFF'
     },
     btnlogout: {
         width: WP('50%'),
-        height: HP('6%'),
+        height: HP('5%'),
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 7,
         borderWidth: 1,
-        borderColor: '#FFF'
+        borderColor: '#FA6901'
+    },
+    updateicon: {
+        height: WP('12%'), 
+        width: WP('12%'),
+        backgroundColor: '#FFF',
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        borderRadius: WP('12%') / 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        shadowOffset: {
+            width: 3,
+            height: 3
+        }
     }
 })
 
@@ -219,15 +290,14 @@ Profile.propTypes = {
     sessions: PropTypes.object.isRequired,
     updateSessions: PropTypes.func.isRequired,
     setMessage: PropTypes.func.isRequired,
-    messagenotification: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
+    setImage: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state){
     return{
-        sessions: state.sessions,
-        messagenotification: state.message
+        sessions: state.sessions
     }
 }
 
-export default connect(mapStateToProps, { updateSessions, setMessage, logout })(Profile);
+export default connect(mapStateToProps, { updateSessions, setMessage, logout, setImage })(Profile);

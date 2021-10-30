@@ -53,9 +53,11 @@ const Tab = createBottomTabNavigator();
 
 const HomeTab = ({ sessions, message, setMessage }) => {
      const { open, message: text } = message;
+
+     let sessionlength = Object.keys(sessions).length;
      
      useEffect(() => {
-          if(Object.keys(sessions).length > 0){
+          if(sessionlength > 0){
                registerForPushNotificationsAsync()
                     .then(async token => {
                          const payload = {
@@ -79,7 +81,7 @@ const HomeTab = ({ sessions, message, setMessage }) => {
                          message: "Can't send notification to your device! Please check notification permission setting"
                     }))
           }
-     }, [sessions]);     
+     }, [sessionlength]);     
      
 
      return <React.Fragment>

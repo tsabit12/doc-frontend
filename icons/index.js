@@ -28,3 +28,4 @@ export { default as TimeOver } from './TimeOver';
 export { default as TimeSleep } from './TimeSleep';
 export { default as TimeAlarm } from './TimeAlarm';
 export { default as StatisticIcon } from './StatisticIcon';
+export { default as CameraIcon } from './Camera';
