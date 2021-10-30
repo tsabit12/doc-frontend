@@ -199,11 +199,16 @@ const Profile = ({ sessions, updateSessions, setMessage, setImage, logout }) => 
                 ListHeaderComponent={
                     <View style={styles.imagecontainer}>
                         <View>
-                            <Image 
+                            { sessions.image === null ? <Image 
+                                source={require('../../assets/images/profil.png')}
+                                style={styles.image}
+                                resizeMode='cover'
+                            /> : <Image 
                                 source={{ uri: `${asseturl}/${sessions.image}`}}
                                 style={styles.image}
                                 resizeMode='cover'
-                            />
+                            /> }
+
                             <TouchableOpacity style={styles.updateicon} activeOpacity={1} onPress={handleChooseImage}>
                                 <CameraIcon />
                             </TouchableOpacity>
@@ -282,7 +287,8 @@ const styles = StyleSheet.create({
         shadowOffset: {
             width: 3,
             height: 3
-        }
+        },
+        elevation: 2
     }
 })
 
