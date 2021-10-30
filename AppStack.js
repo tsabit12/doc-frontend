@@ -4,7 +4,7 @@ import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/
 import { 
     LoginScreen,
     DetailScreen, 
-    MenuScreen,
+    //MenuScreen,
     JatuhTempo,
     UpdatesView,
     User,
@@ -45,14 +45,14 @@ const UserRoute = ({ notification, sessions, message, setMessage }) => {
     return(
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="HomePage">
-                {() => 
+                {(props) => 
                     <HomeTab 
+                        { ...props }
                         sessions={sessions} 
                         message={message}
                         setMessage={setMessage}
                     /> }
             </Stack.Screen>
-            <Stack.Screen name="Menu" component={MenuScreen} options={{ ...horizontalTransition }} />
             <Stack.Screen name="JatuhTempo" component={JatuhTempo} options={{ ...verticalTransition }} />
             <Stack.Screen name="ProduksiKiriman" component={ProduksiKiriman} options={{ ...verticalTransition }} />
             <Stack.Screen name="Users" component={User} options={{ ...verticalTransition }} />
@@ -91,7 +91,7 @@ const AppStack = ({ sessions, updateAvailable, setLoggedIn, notification, messag
     useEffect(() => {
         (async() => {
             try {
-                const sess = await AsyncStorage.getItem('sessions');   
+                const sess = await AsyncStorage.getItem('sessions-v2');   
                 if (sess !== null) {
                     setLoggedIn(JSON.parse(sess))
                 }
