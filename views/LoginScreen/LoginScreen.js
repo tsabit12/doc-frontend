@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { RFValue } from "react-native-responsive-fontsize";
 import { GradientLayout } from '../components';
+import Constants from 'expo-constants';
 
 const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => {
     const [seepassword, setseepassword] = useState(false);
@@ -102,7 +103,7 @@ const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => 
                                 <View style={errors.username ? styles.formcontrolerror : styles.formcontrol}>
                                     <Text style={styles.label}>Username</Text>
                                     <TextInput 
-                                        placeholder='Masukan username' 
+                                        placeholder='Enter your username' 
                                         style={styles.input}
                                         ref={usernameRef}
                                         onSubmitEditing={() => handleSubmitText('username')}
@@ -118,7 +119,7 @@ const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => 
                                     <Text style={styles.label}>Password</Text>
                                     <View style={{flexDirection: 'row'}}>
                                         <TextInput 
-                                            placeholder='Masukan password' 
+                                            placeholder='Enter your password' 
                                             style={{...styles.input, flex: 1}}
                                             secureTextEntry={seepassword ? false : true }
                                             ref={passwordRef}
@@ -155,6 +156,7 @@ const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => 
                                 </TouchableOpacity>
                             </View>
                         </View>
+                        <Text style={{color: '#FFF', textAlign: 'center'}}>Current version  { Constants.manifest.version }</Text>
                     </View>
                 </ScrollView> 
             </KeyboardAvoidingView>
