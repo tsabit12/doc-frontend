@@ -5,7 +5,7 @@ import { LOGGED_IN, LOGGED_OUT, SET_IMAGE, UPDATE_SESSIONS } from "../types";
 export const login = payload => dispatch =>
     service.login(payload)
         .then(async res => {
-            await AsyncStorage.setItem('sessions', JSON.stringify(res.user));
+            await AsyncStorage.setItem('sessions-v2', JSON.stringify(res.user));
             
             dispatch({
                 type: LOGGED_IN,

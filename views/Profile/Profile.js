@@ -143,6 +143,7 @@ const Profile = ({ sessions, updateSessions, setMessage, setImage, logout }) => 
             const { image } = await service.profile.uploadimage(formData);
             setImage(image);
         } catch (error) {
+            console.log(error.request);
             if(error.global){
                 setMessage({ open: true, message: error.global });
             }else{

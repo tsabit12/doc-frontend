@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import service, { asseturl } from "../../config/service";
 import { HP } from "../config/layout";
-import { AngleRight, Hourglass, StatisticIcon, TimeAlarm, TimeOver, TimeSleep } from "../../icons";
+import { AngleRight, Hourglass, People, StatisticIcon, TimeAlarm, TimeOver, TimeSleep } from "../../icons";
 import { Bullets } from "react-native-easy-content-loader";
 import { setMessage } from '../../actions/message';
 import { rupiahNumber } from "../../utils";
@@ -220,7 +220,7 @@ const HomePageScreen = ({ navigation, sessions, setMessage }) => {
                                         </View>
                                    </TouchableOpacity>
                                    <TouchableOpacity 
-                                        style={{ ...styles.list, borderBottomWidth: 0 }}
+                                        style={{ ...styles.list, borderBottomWidth: sessions.roleid === '5' ? 1 : 0}}
                                         activeOpacity={0.8}
                                         onPress={() => navigation.navigate('ProduksiKiriman', {
                                              title: 'Produksi Kiriman',
@@ -235,6 +235,22 @@ const HomePageScreen = ({ navigation, sessions, setMessage }) => {
                                              <AngleRight />
                                         </View>
                                    </TouchableOpacity>
+                                   { sessions.roleid === '5' && <TouchableOpacity 
+                                        style={{ ...styles.list, borderBottomWidth: 0 }}
+                                        activeOpacity={0.8}
+                                        onPress={() => navigation.navigate('Users')}
+                                   >
+                                        <View style={{ ...styles.icon, backgroundColor: '#103D67'}}>
+                                             <People />
+                                        </View>
+                                        <View style={styles.listrightitem}>
+                                             <View>
+                                                  <Text style={styles.listtitletext}>Users</Text>
+                                                  <Text style={styles.listsubtitletext}>Kelola user DOC</Text>
+                                             </View>
+                                             <AngleRight />
+                                        </View>
+                                   </TouchableOpacity> }
                               </React.Fragment>
                          }
                     </View>

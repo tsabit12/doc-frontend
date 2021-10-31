@@ -156,7 +156,7 @@ const LoginScreen = ({ navigation, setMessage, messagenotification, login }) => 
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <Text style={{color: '#FFF', textAlign: 'center'}}>Current version  { Constants.manifest.version }</Text>
+                        <Text style={{color: '#FFF', textAlign: 'center', marginBottom: 5}}>Current version  { Constants.manifest.version }</Text>
                     </View>
                 </ScrollView> 
             </KeyboardAvoidingView>
