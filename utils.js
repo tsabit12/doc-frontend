@@ -124,4 +124,25 @@ export const registerForPushNotificationsAsync = async () => {
     }
   
     return Promise.resolve(token);
-  }
+}
+
+export const getPayloadByRole = (sessions) => {
+    switch (sessions.roleid) {
+        case '4':
+            return {
+                regional: sessions.regionid,
+                kprk: '00'
+            };
+        case '1':
+            return {
+                regional: sessions.regionid,
+                kprk: sessions.officeid
+            }
+        default:
+            return {
+                regional: '00',
+                kprk: '00'
+            }
+    }
+    
+}

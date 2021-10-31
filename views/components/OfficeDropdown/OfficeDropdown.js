@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import service from '../../../config/service';
 import PropTypes from 'prop-types';
 
-const OfficeDropdown = ({ onError, onChoose, offices }) => {
+const OfficeDropdown = ({ onError, onChoose, offices, value={}, roleid }) => {
     const kprkRef = useRef({});
     const [field, setfield] = useState({
         regional: 0, //default value by index
@@ -16,6 +16,14 @@ const OfficeDropdown = ({ onError, onChoose, offices }) => {
     const [kprk, setkprk] = useState([
         {title: 'SEMUA KPRK', value: '00'}
     ]);
+
+    useEffect(() => {
+        if(Object.keys(value).length > 0){
+            const indexregional = offices.findIndex(row => row.value === value.regional);
+            
+            setfield(prev => ({ ...prev, regional: indexregional }));
+        }
+    }, [value]);
 
     useEffect(() => {
         if(field.regional != 0){
@@ -33,6 +41,7 @@ const OfficeDropdown = ({ onError, onChoose, offices }) => {
                     setkprk(kprk);
 
                     kprkRef.current.reset();
+                    
                 } catch (error) {
                     if(error.global){
                         onError(error.global);
@@ -43,6 +52,16 @@ const OfficeDropdown = ({ onError, onChoose, offices }) => {
             })();
         }
     }, [field.regional])
+
+    useEffect(() => {
+        if(kprk.length > 0){
+            if(value.kprk !== '00'){
+                const indexkprk = kprk.findIndex(row => row.value === value.kprk);
+
+                setfield(prev => ({ ...prev, kprk: indexkprk }));
+            }
+        }
+    }, [kprk]);
 
     const handleChange = (index, name) => {
         const params = {
@@ -76,7 +95,7 @@ const OfficeDropdown = ({ onError, onChoose, offices }) => {
             <SelectDropdown
                 data={offices}
                 onSelect={(selectedItem, index) => handleChange(index, 'regional')}
-                defaultValueByIndex={0}
+                defaultValueByIndex={field.regional}
                 buttonStyle={styles.button}
                 dropdownStyle={{borderRadius: 5, marginTop: 5 }}
                 dropdownIconPosition='right'
@@ -87,13 +106,14 @@ const OfficeDropdown = ({ onError, onChoose, offices }) => {
                 buttonTextAfterSelection={(selectedItem, index) => { return selectedItem.title }}
                 rowTextForSelection={(item, index) => { return item }}
                 statusBarTranslucent={true}
+                disabled={ roleid === '4' || roleid === '1' ? true : false }
             />
 
             { field.regional !== 0 && <SelectDropdown
                 data={kprk}
                 ref={kprkRef}
                 onSelect={(selectedItem, index) => handleChange(index, 'kprk')}
-                defaultValueByIndex={0}
+                defaultValueByIndex={field.kprk}
                 buttonStyle={{ ...styles.button, marginRight: 5}}
                 dropdownStyle={{borderRadius: 5, marginTop: 5 }}
                 dropdownIconPosition='right'
@@ -104,6 +124,7 @@ const OfficeDropdown = ({ onError, onChoose, offices }) => {
                 buttonTextAfterSelection={(selectedItem, index) => { return selectedItem.title }}
                 rowTextForSelection={(item, index) => { return item }}
                 statusBarTranslucent={true}
+                disabled={roleid === '1' ? true : false }
             /> }
         </View>
     )
@@ -129,6 +150,8 @@ OfficeDropdown.propTypes = {
     onError: PropTypes.func.isRequired,
     onChoose: PropTypes.func.isRequired,
     offices: PropTypes.array.isRequired,
+    value: PropTypes.object,
+    roleid: PropTypes.string.isRequired,
 }
 
 export default OfficeDropdown;

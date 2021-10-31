@@ -8,7 +8,7 @@ import { HP } from "../config/layout";
 import { AngleRight, Hourglass, People, StatisticIcon, TimeAlarm, TimeOver, TimeSleep } from "../../icons";
 import { Bullets } from "react-native-easy-content-loader";
 import { setMessage } from '../../actions/message';
-import { rupiahNumber } from "../../utils";
+import { getPayloadByRole, rupiahNumber } from "../../utils";
 
 const SPACING_HORIZONTAL = 15;
 const SPACING = HP('2%');
@@ -52,10 +52,8 @@ const HomePageScreen = ({ navigation, sessions, setMessage }) => {
      const getData = async () => {
           setrefreshing(true);
 
-          const payload = {
-               regional: '00',
-               kprk: '00'
-          }
+          const payload = getPayloadByRole(sessions);
+          console.log(payload);
 
           try {
                const { data } = await service.produksikiriman.jatuhtempo(payload);

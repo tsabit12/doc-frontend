@@ -6,7 +6,7 @@ import { HP } from '../config/layout';
 import defaultstyles from '../config/styles';
 import { PieChart } from 'react-native-svg-charts';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { generateColor } from '../../utils';
+import { generateColor, getPayloadByRole } from '../../utils';
 import defaultslider from '../../json/kiriman.json';
 import { setMessage } from '../../actions/message';
 import PropTypes from 'prop-types';
@@ -21,7 +21,7 @@ const options = [
     { title: 'Ongkir', type: 'bar', keys: 'ongkir' }
 ]
 
-const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification, region }) => {
+const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification, region, sessions }) => {
     const { params } = route;
     const [loading, setloading] = useState(true);
     const [option, setoption] = useState({
@@ -40,22 +40,32 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification, r
         startdate: '',
         enddate: ''
     })
+    const [mount, setmount] = useState(false);
+    
+    useEffect(() => {
+        if(Object.keys(sessions).length > 0){
+            const payload = getPayloadByRole(sessions);
+            setoffice(payload);
+            setmount(true);
+       }
+    }, [sessions]);
 
     useEffect(() => {
+        if(mount){
+            let yourDate = new Date();
+            const offset    = yourDate.getTimezoneOffset()
+            yourDate  = new Date(yourDate.getTime() - (offset*60*1000))
+            yourDate  = yourDate.toISOString().split('T')[0];
 
-        let yourDate = new Date();
-        const offset    = yourDate.getTimezoneOffset()
-        yourDate  = new Date(yourDate.getTime() - (offset*60*1000))
-        yourDate  = yourDate.toISOString().split('T')[0];
-
-        const payload = {
-            startdate: yourDate,
-            enddate: yourDate,
-            ...office
+            const payload = {
+                startdate: yourDate,
+                enddate: yourDate,
+                ...office
+            }
+            
+            onSearch(payload);
         }
-        
-        onSearch(payload);
-    }, []);
+    }, [mount]);
 
     const renderDot = ({ item  }) => {
         return(
@@ -114,7 +124,6 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification, r
             //passing data to render pie/bar data not from state
             chooseGrafik(0, get.data, { regional: payload.regional, kprk: payload.kprk }); 
         } catch (error) {
-            console.log(error);
             setdata([]);
             chooseGrafik(0, []); 
             setslider(defaultslider);
@@ -199,6 +208,8 @@ const ProduksiKiriman = ({ navigation, route, setMessage, messagenotification, r
                                 onError={(message) => setMessage({ open: true, message })}
                                 onChoose={handleChangeOffice}
                                 offices={region}
+                                value={getPayloadByRole(sessions)}
+                                roleid={sessions.roleid}
                             />
                             <SliderAnimation listitem={slider} onPressDetail={handlePressDetail}/>
                         </View>
@@ -271,12 +282,14 @@ ProduksiKiriman.propTypes = {
     setMessage: PropTypes.func.isRequired,
     messagenotification: PropTypes.object.isRequired,
     region: PropTypes.array.isRequired,
+    sessions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state){
     return {
         messagenotification: state.message,
-        region: state.region
+        region: state.region,
+        sessions: state.sessions
     }
 }
 

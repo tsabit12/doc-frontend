@@ -7,6 +7,7 @@ import defaultstyles from "../config/styles";
 import { AngleLeft } from "../../icons";
 import { connect } from "react-redux";
 import { BarComponent } from "./components";
+import { getPayloadByRole } from "../../utils";
 
 const getoptions = (filterfield) => {
      const { regional, kprk } = filterfield;
@@ -24,7 +25,7 @@ const getoptions = (filterfield) => {
      return result;
 }
 
-const DetailSummary = ({ navigation, route, region }) => {
+const DetailSummary = ({ navigation, route, region, sessions }) => {
      const { data, title } = route.params;
 
      const [filterfield, setfilterfield] = useState({
@@ -32,12 +33,23 @@ const DetailSummary = ({ navigation, route, region }) => {
           kprk: '00'
      })
      const [chart, setchart] = useState([]);
+     const [mount, setmount] = useState(false);
 
      const optiontypes = getoptions(filterfield);
 
      useEffect(() => {
-          setchart(calculateSum(optiontypes, data));
-     }, [filterfield, optiontypes, data]);
+          if(Object.keys(sessions).length > 0){
+               const payload = getPayloadByRole(sessions);
+               setfilterfield(payload);
+               setmount(true);
+          }
+     }, [sessions])
+
+     useEffect(() => {
+          if(mount){
+               setchart(calculateSum(optiontypes, data));
+          }
+     }, [filterfield, optiontypes, data, mount]);
 
      const calculateSum = (types, list) => {
           let groupedObject = {};
@@ -83,6 +95,8 @@ const DetailSummary = ({ navigation, route, region }) => {
                     <OfficeDropdown 
                          offices={region}
                          onChoose={(value) => setfilterfield(value)}
+                         value={getPayloadByRole(sessions)}
+                         roleid={sessions.roleid}
                     />
                     <View style={styles.content}>
                          <BarComponent data={chart} />
@@ -114,11 +128,13 @@ DetailSummary.propTypes = {
           }).isRequired,
      }).isRequired,
      region: PropTypes.array.isRequired,
+     sessions: PropTypes.object.isRequired,
 }
 
 function mapStateToProps(state){
      return {
-          region: state.region
+          region: state.region,
+          sessions: state.sessions
      }
 }
 
